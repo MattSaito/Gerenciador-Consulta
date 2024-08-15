@@ -1,0 +1,10 @@
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_fees) VALUES (UUID(), 'user1', 'pass1', 'user1@example.com', 'Specialty1', 'CRM123', 100.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user2', 'pass2', 'user2@example.com', 'Specialty2', 'CRM456', 150.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user3', 'pass3', 'user3@example.com', 'Specialty3', 'CRM789', 120.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user4', 'pass4', 'user4@example.com', 'Specialty1', 'CRM321', 130.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user5', 'pass5', 'user5@example.com', 'Specialty2', 'CRM654', 110.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user6', 'pass6', 'user6@example.com', 'Specialty3', 'CRM987', 140.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user7', 'pass7', 'user7@example.com', 'Specialty1', 'CRM123', 120.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user8', 'pass8', 'user8@example.com', 'Specialty2', 'CRM456', 160.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user9', 'pass9', 'user9@example.com', 'Specialty3', 'CRM789', 130.00);
+INSERT INTO DOCTOR (doctoruuid, username, password, email, specialization, CRM, doc_Fees) VALUES (UUID(), 'user10', 'pass10', 'user10@example.com', 'Specialty4', 'CRM321', 140.00);
