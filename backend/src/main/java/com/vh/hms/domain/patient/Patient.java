@@ -1,12 +1,11 @@
 package com.vh.hms.domain.patient;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.vh.hms.domain.appointment.Appointment;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,6 +22,8 @@ public class Patient implements Serializable {
     private String phone;
     private String cpf;
     private String password;
+    @OneToMany(mappedBy = "patient")
+    private HashSet<Appointment> appointments;
 
     public Patient(UUID uuid, String firstName, String lastName, String email, String phone, String cpf, String password) {
         this.patientUUID = uuid;
