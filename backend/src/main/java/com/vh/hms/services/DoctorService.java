@@ -29,18 +29,21 @@ public class DoctorService {
         return new DoctorResponseDTO(doctor);
     }
 
+    @Transactional
     public DoctorResponseDTO update (DoctorRequestDTO doctorRequestDTO, String email) {
         Doctor doctor = notNullValidator(email);
         dtoToDoctor(doctor, doctorRequestDTO);
         return new DoctorResponseDTO(doctorRepository.save(doctor));
     }
 
-    public void create(DoctorRequestDTO doctorRequestDTO) {
+    @Transactional
+    public String create(DoctorRequestDTO doctorRequestDTO) {
         Doctor doctor = new Doctor();
         dtoToDoctor(doctor, doctorRequestDTO);
-        doctorRepository.save(doctor);
+        return doctorRepository.save(doctor).getEmail();
     }
 
+    @Transactional
     public void deleteByEmail(String email) {
         doctorRepository.deleteByEmail(email);
     }

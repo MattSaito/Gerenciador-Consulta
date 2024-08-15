@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,7 +25,7 @@ public class Doctor implements Serializable {
     private String CRM;
     private BigDecimal docFees;
     @OneToMany(mappedBy = "doctor")
-    private HashSet<Appointment> appointments;
+    private final Set<Appointment> appointments = new HashSet<>();
 
     public Doctor() {}
 
@@ -92,6 +93,14 @@ public class Doctor implements Serializable {
 
     public void setDocFees(BigDecimal docFees) {
         this.docFees = docFees;
+    }
+
+    public Set<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(Appointment appointment) {
+        appointments.add(appointment);
     }
 
     @Override
