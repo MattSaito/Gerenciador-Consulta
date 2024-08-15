@@ -1,9 +1,8 @@
 package com.vh.hms.domain.appointment;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.vh.hms.domain.doctor.Doctor;
+import com.vh.hms.domain.patient.Patient;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,8 +21,12 @@ public class Appointment implements Serializable {
     private Instant time;
     private LocalDate date;
     private AppointmentStatus status;
-
-    public Appointment () {}
+    @ManyToOne
+    private Doctor doctor;
+    @ManyToOne
+    private Patient patient;
+    public Appointment() {
+    }
 
     public Appointment(UUID appointmentUUID, Instant time, LocalDate date, AppointmentStatus status) {
         this.appointmentUUID = appointmentUUID;

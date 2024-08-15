@@ -1,13 +1,12 @@
 package com.vh.hms.domain.doctor;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.vh.hms.domain.appointment.Appointment;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,6 +23,8 @@ public class Doctor implements Serializable {
     private String specialization;
     private String CRM;
     private BigDecimal docFees;
+    @OneToMany(mappedBy = "doctor")
+    private HashSet<Appointment> appointments;
 
     public Doctor() {}
 
