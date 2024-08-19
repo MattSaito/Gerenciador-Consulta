@@ -5,6 +5,7 @@ import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.doctor.DoctorResponseDTO;
 import com.vh.hms.repositories.DoctorRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,14 +33,14 @@ public class DoctorService {
     @Transactional
     public DoctorResponseDTO update (DoctorRequestDTO doctorRequestDTO, String email) {
         Doctor doctor = notNullValidator(email);
-        dtoToDoctor(doctor, doctorRequestDTO);
+        BeanUtils.copyProperties(doctorRequestDTO, doctor);
         return new DoctorResponseDTO(doctorRepository.save(doctor));
     }
 
     @Transactional
     public String create(DoctorRequestDTO doctorRequestDTO) {
         Doctor doctor = new Doctor();
-        dtoToDoctor(doctor, doctorRequestDTO);
+        BeanUtils.copyProperties(doctorRequestDTO, doctor);
         return doctorRepository.save(doctor).getEmail();
     }
 
@@ -51,13 +52,5 @@ public class DoctorService {
     private Doctor notNullValidator(String email) {
         Optional<Doctor> doctorOptional = doctorRepository.findByEmail(email);
         return doctorOptional.orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
-    }
-
-    private void dtoToDoctor(Doctor doctor, DoctorRequestDTO doctorRequestDTO) {
-        doctor.setUsername(doctorRequestDTO.username());
-        doctor.setPassword(doctorRequestDTO.password());
-        doctor.setDocFees(doctorRequestDTO.docFees());
-        doctor.setEmail(doctorRequestDTO.email());
-        doctor.setSpecialization(doctor.getSpecialization());
     }
 }
