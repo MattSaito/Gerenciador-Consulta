@@ -1,10 +1,7 @@
 package com.vh.hms.controllers;
 
-import com.vh.hms.domain.doctor.DoctorRequestDTO;
-import com.vh.hms.domain.doctor.DoctorResponseDTO;
 import com.vh.hms.domain.patient.PatientRequestDTO;
 import com.vh.hms.domain.patient.PatientResponseDTO;
-import com.vh.hms.repositories.PatientRepository;
 import com.vh.hms.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
