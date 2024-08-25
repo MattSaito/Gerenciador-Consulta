@@ -1,76 +1,68 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import background from "../../../public/a.png";
 import Image from "next/image";
-import { grey } from "@mui/material/colors";
 import ButtonOutline from "../sub/ButtonOutline";
-import logo from "../../../public/logo.svg";
 import { AuthService } from "@/app/service/Services";
-
-const defaultTheme = createTheme({
-  palette: {
-    primary: {
-      main: "#478df7",
-    },
-    secondary: {
-      main: grey[50],
-    },
-  },
-});
+import { defaultTheme } from "@/utils/defaultTheme";
+import { ThemeProvider } from "@mui/material/styles";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SignInSchema, signInSchema } from "@/utils/schema";
+import { Controller, useForm } from "react-hook-form";
+import { redirect, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function SignIn() {
   const service = new AuthService();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    defaultValues: {
+      login: "",
+      password: "",
+    },
+    resolver: zodResolver(signInSchema),
+  });
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    service
-      .login({
-        login: email,
-        password: password,
-      })
-      .then(function (response) {
-        setSuccess("CREATED");
-        setMessage("Autenticação realizada!");
-        setEmail("");
-        setPassword("");
-      })
-      .catch(function (error) {
-        setSuccess("");
-        setMessage("Falha na autenticação.");
-      });
-  };
+  const router = useRouter();
+
+  const onSubmit = useCallback(
+    (values: SignInSchema) => {
+      service
+        .login({
+          login: values.login,
+          password: values.password,
+        })
+        .then(function (response) {
+          setSuccess(true);
+          const token = response.data.token;
+          Cookies.set("token", token, { expires: 1 });
+          router.push("/auth/sign-in/dashboard");
+        })
+        .catch(function (error) {
+          setMessage("Falha na autenticação.");
+          console.error(error);
+        });
+    },
+    [router]
+  );
   return (
     <>
-      <nav
-        className={
-          "w-full bg-white fixed top-0 z-30 transition-all px-5 sm:grid sm:grid-flow-col py-5 sm:py-4 flex-col justify-normal"
-        }
-      >
-        <div className="col-start-1  col-end-2 flex items-center h-10 w-auto justify-between sm:justify-normal">
-          <div className="flex items-center">
-            <Link href="/">
-              <Image src={logo} alt="logo" width={70} height={70} />
-            </Link>
-            <h1 className="text-black-600 ml-2 text-lg">Global Hospital</h1>
-          </div>
-        </div>
-      </nav>
       <div className="sm:px-10">
         <ThemeProvider theme={defaultTheme}>
           <Grid
@@ -120,41 +112,48 @@ export default function SignIn() {
                 <Box
                   component="form"
                   noValidate
-                  onSubmit={handleSubmit}
+                  onSubmit={handleSubmit(onSubmit)}
                   sx={{ mt: 1 }}
                 >
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Endereço de Email"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                  <Controller
+                    name="login"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Endereço de Email"
+                        id="email"
+                        autoComplete="email"
+                        error={!!errors.login}
+                        helperText={errors.login?.message}
+                        {...field}
+                      />
+                    )}
                   />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
+                  <Controller
                     name="password"
-                    label="Senha"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Senha"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        {...field}
+                      />
+                    )}
                   />
-                  <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Lembre-se de mim"
-                  />
-                  <div className="w-100 my-5">
+                  <div className="my-5">
                     <ButtonOutline type="submit">Entrar</ButtonOutline>
                   </div>
-                  <Grid container>
+                  <Grid container justifyContent={"center"}>
                     <Grid item>
                       <Link
                         className="cursor-pointer"
@@ -165,17 +164,17 @@ export default function SignIn() {
                         {"Não possui uma conta? Cadastre-se "}
                       </Link>
                     </Grid>
-                    <div className="bg-slate-100 flex flex-col"></div>
                   </Grid>
                 </Box>
+                <div
+                  className={`${
+                    success === true ? "text-blue-500" : "text-red-600"
+                  } px-5 py-2`}
+                >
+                  {message}
+                </div>
+                <div className="bg-slate-100 flex flex-col"></div>
               </Box>
-              <div
-                className={`${
-                  success === "CREATED" ? "text-blue-500" : "text-red-600"
-                } px-5 py-2`}
-              >
-                {message}
-              </div>
             </Grid>
           </Grid>
         </ThemeProvider>
