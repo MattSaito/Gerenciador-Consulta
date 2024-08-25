@@ -17,6 +17,7 @@ export class MessageService {
 
 export class AuthService {
   login(body: { login: string; password: string }) {
+    axiosInstance.defaults.withCredentials = true;
     return axiosInstance.post("/auth/login", body);
   }
 
