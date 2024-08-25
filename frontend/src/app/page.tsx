@@ -1,9 +1,15 @@
+import Footer from "@/components/main/Footer";
 import Hero from "@/components/main/Hero";
+import Navbar from "@/components/main/Navbar";
 
 export default function Page() {
   return (
-    <main className="h-full w-full bg-gray-50">
+    <>
+      <Navbar />
+      <main className="h-full w-full bg-white">
         <Hero />
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }
