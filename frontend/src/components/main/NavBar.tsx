@@ -6,6 +6,7 @@ import ButtonOutline from "../sub/ButtonOutline";
 import Image from "next/image";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "../sub/MenuOverlay";
+import logo from "../../../public/logo.svg";
 
 const navLinks = [
   {
@@ -33,16 +34,16 @@ const Navbar = () => {
     <>
       <nav
         className={
-          "w-full fixed top-0 z-30 bg-gray-50 transition-all px-5 sm:grid sm:grid-flow-col py-5 sm:py-4 flex-col sm:justify-normal" +
+          "w-full bg-white fixed top-0 z-30 transition-all px-5 sm:grid sm:grid-flow-col py-5 sm:py-4 flex-col sm:justify-normal" +
           (scrollActive ? " shadow-md pt-0" : " pt-4")
         }
       >
-        <div className="col-start-1 col-end-2 flex items-center h-10 w-auto justify-between sm:justify-normal">
+        <div className="col-start-1  col-end-2 flex items-center h-10 w-auto justify-between sm:justify-normal">
           <div className="flex items-center">
-            <Image src="./logo.svg" alt="logo" width={70} height={70} />
-            <h1 className="text-black-600 ml-2 text-lg font-semibold">
-              Global Hospital
-            </h1>
+            <Link href="/">
+              <Image src={logo} alt="logo" width={70} height={70} />
+            </Link>
+            <h1 className="text-black-600 ml-2 text-lg">Global Hospital</h1>
           </div>
           <div className="mobile-menu flex md:hidden">
             {!navbarOpen ? (
@@ -78,12 +79,14 @@ const Navbar = () => {
           </div>
           <div className="gap-5 text-lg flex items-center">
             <Link
-              href="/contact"
+              href="/auth/sign-in"
               className="text-black-600 mx-2 sm:mx-4 capitalize tracking-wide hover:text-[#478DF7] transition-all"
             >
               Entrar
             </Link>
-            <ButtonOutline>Cadastrar</ButtonOutline>
+            <ButtonOutline>
+              <Link href="/auth/sign-up">Cadastrar</Link>
+            </ButtonOutline>
           </div>
         </div>
         {navbarOpen ? (
