@@ -25,8 +25,16 @@ textarea {
   }
 }
 
+
+
 body {
-  background: rgb(249, 250, 251);
+  margin: 0;
+  background: #FFFFFF;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .animation-hover:after {
@@ -42,6 +50,7 @@ body {
 .animation-hover:hover:after {
   @apply left-0 w-full;
 }
+
 
 li.custom-list:before {
   content: "\2022"; /* bullet point, for screen readers */
