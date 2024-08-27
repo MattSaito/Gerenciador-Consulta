@@ -108,11 +108,11 @@ public class Doctor implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Doctor doctor = (Doctor) o;
-        return Objects.equals(doctorUUID, doctor.doctorUUID);
+        return Objects.equals(doctorUUID, doctor.doctorUUID) && Objects.equals(email, doctor.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctorUUID);
+        return Objects.hash(doctorUUID, email);
     }
 }

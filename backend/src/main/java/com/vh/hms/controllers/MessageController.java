@@ -15,35 +15,28 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/messages")
 public class MessageController {
     @Autowired
     MessageService messageService;
 
-    @GetMapping
+    @GetMapping(value = "/messages")
     public ResponseEntity<Page<MessageDTO>> getAll(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "sender") String orderBy)
     {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(messageService.findAllPaged(pageRequest));
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/messages/{id}")
     public ResponseEntity<MessageDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(messageService.findById(id));
     }
-
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<MessageDTO> update(@PathVariable UUID id, @RequestBody @Valid MessageDTO messageDTO) {
-        return ResponseEntity.ok().body(messageService.update(id, messageDTO));
-    }
-
-    @PostMapping
+    @PostMapping(value = "/contact")
     public ResponseEntity<MessageDTO> create(@RequestBody @Valid MessageDTO messageDTO) {
         URI url = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(messageService.create(messageDTO)).toUri();
         return ResponseEntity.created(url).build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/messages/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         messageService.deleteById(id);
         return ResponseEntity.ok().build();
