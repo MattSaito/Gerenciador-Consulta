@@ -1,6 +1,6 @@
 "use client";
 
-import DashBoardBar from "@/components/main/DashboardBar";
+import DashBoardBar from "@/components/sub/dashboard/DashboardBar";
 import { defaultTheme } from "@/utils/defaultTheme";
 import { ThemeProvider } from "@emotion/react";
 import { Box, CssBaseline } from "@mui/material";

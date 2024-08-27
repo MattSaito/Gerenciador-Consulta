@@ -1,5 +1,5 @@
 import SignUp from "@/components/main/Register";
-import AuthNav from "@/components/sub/AuthNav";
+import AuthNav from "@/components/sub/nav/AuthNav";
 
 export default function Page() {
   return (
