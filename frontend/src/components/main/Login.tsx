@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import background from "../../../public/a.png";
 import Image from "next/image";
-import ButtonOutline from "../sub/ButtonOutline";
+import ButtonOutline from "../sub/buttons/ButtonOutline";
 import { AuthService } from "@/app/service/Services";
 import { defaultTheme } from "@/utils/defaultTheme";
 import { ThemeProvider } from "@mui/material/styles";

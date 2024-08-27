@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 import Image from "next/image";
-import ButtonPrimary from "../sub/ButtonPrimary";
+import ButtonPrimary from "../sub/buttons/ButtonPrimary";
 import { motion } from "framer-motion";
 import ScrollAnimationWrapper from "./ScrollAnimationWrapper";
 import getScrollAnimation from "@/utils/getScrollAnimation";

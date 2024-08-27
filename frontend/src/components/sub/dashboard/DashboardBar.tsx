@@ -12,10 +12,10 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems } from "../../utils/listItems";
+import { mainListItems } from "../../../utils/listItems";
 
 import Image from "next/image";
-import logo from "../../../public/blueLogo.svg";
+import logo from "../../../../public/blueLogo.svg";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";

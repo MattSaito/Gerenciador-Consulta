@@ -2,7 +2,7 @@
 import Footer from "@/components/main/Footer";
 import SignIn from "@/components/main/Login";
 import Navbar from "@/components/main/Navbar";
-import AuthNav from "@/components/sub/AuthNav";
+import AuthNav from "@/components/sub/nav/AuthNav";
 
 export default function Page() {
   return (

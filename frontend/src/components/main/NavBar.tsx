@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Link as LinkScroll } from "react-scroll";
-import ButtonOutline from "../sub/ButtonOutline";
+import ButtonOutline from "../sub/buttons/ButtonOutline";
 import Image from "next/image";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import MenuOverlay from "../sub/MenuOverlay";
+import MenuOverlay from "../sub/nav/MenuOverlay";
 import logo from "../../../public/logo.svg";
 
 const navLinks = [
