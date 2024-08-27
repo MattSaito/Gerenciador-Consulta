@@ -1,5 +1,6 @@
 package com.vh.hms.controllers;
 
+import com.vh.hms.auth.AuthService;
 import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.doctor.DoctorResponseDTO;
 import com.vh.hms.services.DoctorService;
@@ -19,6 +20,8 @@ import java.net.URI;
 public class DoctorController {
     @Autowired
     DoctorService doctorService;
+    @Autowired
+    AuthService authService;
     @GetMapping
     public ResponseEntity<Page<DoctorResponseDTO>> findAllPaged(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "username") String orderBy) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
@@ -30,9 +33,11 @@ public class DoctorController {
         return ResponseEntity.ok().body(doctorService.findByEmail(email));
     }
 
-    @PostMapping
+    @PostMapping(value = "/register")
     public ResponseEntity<DoctorResponseDTO> create (@RequestBody @Valid DoctorRequestDTO doctorRequestDTO) {
-        URI url = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(doctorService.create(doctorRequestDTO)).toUri();
+        if (authService.loadUserByUsername(doctorRequestDTO.email()) != null) return ResponseEntity.badRequest().build();
+        authService.doctorSignUp(doctorRequestDTO);
+        URI url = ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri();
         return ResponseEntity.created(url).build();
     }
 

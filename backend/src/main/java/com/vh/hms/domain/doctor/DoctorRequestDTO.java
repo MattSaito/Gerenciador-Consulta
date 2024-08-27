@@ -6,5 +6,5 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record DoctorRequestDTO(@NotBlank String username, @NotBlank String email, @NotBlank String specialization, @NotNull String password, @NotNull BigDecimal docFees) {
+    public record DoctorRequestDTO(@NotBlank String username, @NotBlank String email, @NotBlank String specialization, @NotNull String password) {
 }

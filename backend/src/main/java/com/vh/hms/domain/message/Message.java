@@ -20,15 +20,15 @@ public class Message implements Serializable {
     private String sender;
     private String email;
     private String phone;
-    private String desc;
+    private String description;
 
     public Message() {}
-    public Message(UUID messageUUID, String sender, String email, String phone, String desc) {
+    public Message(UUID messageUUID, String sender, String email, String phone, String description) {
         this.messageUUID = messageUUID;
         this.sender = sender;
         this.email = email;
         this.phone = phone;
-        this.desc = desc;
+        this.description = description;
     }
 
     public UUID getMessageUUID() {
@@ -63,12 +63,12 @@ public class Message implements Serializable {
         this.phone = phone;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String desc) {
+        this.description = desc;
     }
 
     @Override
