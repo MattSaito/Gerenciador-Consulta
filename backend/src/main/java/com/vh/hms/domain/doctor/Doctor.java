@@ -18,6 +18,7 @@ public class Doctor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID doctorUUID;
+    @Column(name = "Doctor Name")
     private String username;
     private String password;
     private String email;
