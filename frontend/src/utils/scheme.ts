@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isValidCPF, isValidPhoneNumber } from "./validations";
+import Select from "react-select";
 
 export const signUpSchema = z.object({
   firstName: z
