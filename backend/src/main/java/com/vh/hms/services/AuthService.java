@@ -1,13 +1,13 @@
-package com.vh.hms.auth;
+package com.vh.hms.services;
 
 import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.user.User;
 import com.vh.hms.domain.patient.PatientRequestDTO;
+import com.vh.hms.repositories.UserRepository;
 import com.vh.hms.services.DoctorService;
 import com.vh.hms.services.PatientService;
 import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

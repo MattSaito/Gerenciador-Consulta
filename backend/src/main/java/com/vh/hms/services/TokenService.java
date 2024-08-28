@@ -1,4 +1,4 @@
-package com.vh.hms.auth.config;
+package com.vh.hms.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

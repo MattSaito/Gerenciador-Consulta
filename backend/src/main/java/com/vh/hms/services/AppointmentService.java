@@ -1,7 +1,6 @@
 package com.vh.hms.services;
 
 
-import com.vh.hms.auth.AuthService;
 import com.vh.hms.domain.appointment.Appointment;
 import com.vh.hms.domain.appointment.AppointmentRequestDTO;
 import com.vh.hms.domain.appointment.AppointmentResponseDTO;
@@ -40,8 +39,7 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public Page<AppointmentResponseDTO> findAllByAuthenticated(Pageable pageable) {
         User user = authService.getAuthenticatedUser();
-        if (user.getRole() == UserRole.PATIENT)
-            return appointmentRepository.findAllByPatient_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
+        if (user.getRole() == UserRole.PATIENT) return appointmentRepository.findAllByPatient_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
         return appointmentRepository.findAllByDoctor_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
     }
 
@@ -56,12 +54,13 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void create(AppointmentRequestDTO requestDTO) {
-        if (isDisponible(requestDTO.time(), requestDTO.date(), requestDTO.doctor())) return; // Exception
+    public UUID create(AppointmentRequestDTO requestDTO) {
+        if (isDisponible(requestDTO.time(), requestDTO.date(), requestDTO.doctor())) return null; // Exception
         Appointment appointment = new Appointment();
         BeanUtils.copyProperties(requestDTO, appointment);
         appointment.setStatus(AppointmentStatus.ACTIVE);
         appointmentRepository.save(appointment);
+        return appointment.getAppointmentUUID();
     }
 
     public void finish() {
@@ -79,12 +78,6 @@ public class AppointmentService {
             else appointment.setStatus((AppointmentStatus.CANCELLED_BY_DOCTOR));
             appointmentRepository.save(appointment);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public AppointmentResponseDTO findById(UUID id) {
-        Appointment appointment = notNullValidator(id);
-        return new AppointmentResponseDTO(appointment);
     }
 
     private Appointment notNullValidator(UUID id) {

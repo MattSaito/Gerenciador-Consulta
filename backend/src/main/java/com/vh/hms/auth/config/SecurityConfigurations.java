@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -31,8 +32,15 @@ public class SecurityConfigurations {
                         .requestMatchers("/messages").permitAll()
                         .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/appointments").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.POST, "/appointments/booking").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.GET, "/{doctor}").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.GET, "/{patient}").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.GET,"/my").hasAnyRole("PATIENT", "DOCTOR")
+                        .requestMatchers(HttpMethod.GET, "/appointments").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/appointments/finish").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/appointments/cancel/{id}").hasAnyRole("PATIENT", "DOCTOR")
                         .requestMatchers("/h2-console/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -43,6 +51,7 @@ public class SecurityConfigurations {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

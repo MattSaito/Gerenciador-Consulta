@@ -1,4 +1,4 @@
-package com.vh.hms.auth;
+package com.vh.hms.repositories;
 
 import com.vh.hms.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
