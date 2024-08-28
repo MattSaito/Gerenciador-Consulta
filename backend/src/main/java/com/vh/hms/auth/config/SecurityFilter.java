@@ -1,7 +1,8 @@
 package com.vh.hms.auth.config;
 
 
-import com.vh.hms.auth.AuthService;
+import com.vh.hms.services.AuthService;
+import com.vh.hms.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
