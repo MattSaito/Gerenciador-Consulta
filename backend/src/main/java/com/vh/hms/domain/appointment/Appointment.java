@@ -1,13 +1,14 @@
 package com.vh.hms.domain.appointment;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vh.hms.domain.doctor.Doctor;
 import com.vh.hms.domain.patient.Patient;
 import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,7 +19,9 @@ public class Appointment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID appointmentUUID;
-    private Instant time;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime time;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate date;
     private AppointmentStatus status;
     @ManyToOne
@@ -28,7 +31,7 @@ public class Appointment implements Serializable {
     public Appointment() {
     }
 
-    public Appointment(UUID appointmentUUID, Instant time, LocalDate date, AppointmentStatus status) {
+    public Appointment(UUID appointmentUUID, LocalTime time, LocalDate date, AppointmentStatus status) {
         this.appointmentUUID = appointmentUUID;
         this.time = time;
         this.date = date;
@@ -43,11 +46,11 @@ public class Appointment implements Serializable {
         this.appointmentUUID = appointmentUUID;
     }
 
-    public Instant getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(Instant time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -65,6 +68,22 @@ public class Appointment implements Serializable {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
     @Override

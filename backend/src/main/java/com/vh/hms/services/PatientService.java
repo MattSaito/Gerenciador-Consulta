@@ -1,11 +1,13 @@
 package com.vh.hms.services;
 
 
+import com.vh.hms.domain.appointment.AppointmentStatus;
 import com.vh.hms.domain.patient.Patient;
 import com.vh.hms.domain.patient.PatientRequestDTO;
 import com.vh.hms.domain.patient.PatientResponseDTO;
 import com.vh.hms.repositories.PatientRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.vh.hms.services.exceptions.DatabaseException;
+import com.vh.hms.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,11 @@ public class PatientService {
         return new PatientResponseDTO(patient);
     }
 
+    @Transactional(readOnly = true)
+    public Patient findPatientByEmail(String email) {
+        return notNullValidator(email);
+    }
+
     @Transactional
     public PatientResponseDTO update (PatientRequestDTO patientRequestDTO, String email) {
         Patient patient = notNullValidator(email);
@@ -45,11 +52,12 @@ public class PatientService {
     }
     @Transactional
     public void deleteByEmail(String email) {
+        Patient patient = notNullValidator(email);
+        if (patient.getAppointments().stream().anyMatch(a -> a.getStatus() == AppointmentStatus.ACTIVE)) throw new DatabaseException();
         patientRepository.deleteByEmail(email);
     }
-
     private Patient notNullValidator(String email) {
         Optional<Patient> patientOptional = patientRepository.findByEmail(email);
-        return patientOptional.orElseThrow(() -> new EntityNotFoundException("Patient not found"));
+        return patientOptional.orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 }

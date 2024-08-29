@@ -34,18 +34,18 @@ public class AppointmentController {
      return ResponseEntity.ok().body(service.findAllByAuthenticated(pageRequest));
     }
 
-    @GetMapping("/{doctor}")
+    @GetMapping("/doctor/{doctor}")
     public ResponseEntity<Page<AppointmentResponseDTO>> getAllFromDoctor(@PathVariable String doctor, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "date") String orderBy)
     {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(service.findAllByDoctor(pageRequest, doctor));
     }
 
-    @GetMapping("/{patient}")
+    @GetMapping("/patient/{patient}")
     public ResponseEntity<Page<AppointmentResponseDTO>> getAllFromPatient(@PathVariable String patient, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "date") String orderBy)
     {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
-        return ResponseEntity.ok().body(service.findAllByDoctor(pageRequest, patient));
+        return ResponseEntity.ok().body(service.findAllByPatient(pageRequest, patient));
     }
 
     @PostMapping("/booking")

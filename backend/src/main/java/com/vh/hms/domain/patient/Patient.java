@@ -23,7 +23,7 @@ public class Patient implements Serializable {
     private String cpf;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Appointment> appointments = new HashSet<>();
 
     public Patient(UUID uuid, String firstName, String lastName, String phone, String cpf) {

@@ -8,7 +8,8 @@ import com.vh.hms.domain.appointment.AppointmentStatus;
 import com.vh.hms.domain.user.User;
 import com.vh.hms.domain.user.UserRole;
 import com.vh.hms.repositories.AppointmentRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.vh.hms.services.exceptions.ResourceExistsException;
+import com.vh.hms.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,8 @@ public class AppointmentService {
     AuthService authService;
     @Autowired
     DoctorService doctorService;
+    @Autowired
+    PatientService patientService;
 
     @Transactional(readOnly = true)
     public Page<AppointmentResponseDTO> findAll(Pageable pageable) {
@@ -55,10 +58,8 @@ public class AppointmentService {
 
     @Transactional
     public UUID create(AppointmentRequestDTO requestDTO) {
-        if (isDisponible(requestDTO.time(), requestDTO.date(), requestDTO.doctor())) return null; // Exception
-        Appointment appointment = new Appointment();
-        BeanUtils.copyProperties(requestDTO, appointment);
-        appointment.setStatus(AppointmentStatus.ACTIVE);
+        if (isAvailable(requestDTO.time(), requestDTO.date(), requestDTO.doctor().getUsername())) throw new ResourceExistsException("Unavailable appointment");
+        Appointment appointment = dtoToAppointment(requestDTO);
         appointmentRepository.save(appointment);
         return appointment.getAppointmentUUID();
     }
@@ -82,10 +83,20 @@ public class AppointmentService {
 
     private Appointment notNullValidator(UUID id) {
         Optional<Appointment> appointmentOptional = appointmentRepository.findById(id);
-        return appointmentOptional.orElseThrow(() -> new EntityNotFoundException("Appointment not found"));
+        return appointmentOptional.orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
     }
 
-    private boolean isDisponible(Instant time, LocalDate date, String username) {
+    private Appointment dtoToAppointment(AppointmentRequestDTO requestDTO) {
+        Appointment appointment = new Appointment();
+        BeanUtils.copyProperties(requestDTO, appointment);
+        appointment.setStatus(AppointmentStatus.ACTIVE);
+        String email = authService.getAuthenticatedUser().getLogin();
+        appointment.setPatient(patientService.findPatientByEmail(email));
+        return appointment;
+    }
+    private boolean isAvailable(Instant time, LocalDate date, String username) {
         return appointmentRepository.existsByDateAndTimeAndDoctor_Username(date, time, username);
     }
+
+
 }
