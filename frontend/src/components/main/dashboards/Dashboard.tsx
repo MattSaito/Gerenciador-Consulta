@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import Patient from "./Patient";
 import Doctor from "./Doctor";
 import { jwtDecode } from "jwt-decode";
+import Admin from "./Admin";
 
 export interface DecodedToken {
     role: string;
@@ -28,7 +29,7 @@ export default function Dashboard() {
       dashboardContent = <Doctor />;
       break;
     case "ADMIN":
-      dashboardContent = <div></div>;
+      dashboardContent = <Admin />;
       break;
     default:
       break;

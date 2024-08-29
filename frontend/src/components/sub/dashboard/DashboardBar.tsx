@@ -12,13 +12,18 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, patientItem } from "../../../utils/listItems";
+import {
+  adminItems,
+  exitItem,
+  historicItem,
+  mainItem,
+  patientItem,
+} from "../../../utils/listItems";
 
 import Image from "next/image";
-import logo from "../../../../public/blueLogo.svg";
-
-import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import logo from "../../../../public/blueLogo.svg"
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { AuthService } from "@/app/service/Services";
@@ -75,30 +80,32 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+const token = Cookies.get("token") || "";
+const decodedToken: DecodedToken = jwtDecode(token);
+
 export default function DashBoardBar() {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false); 
   const [username, setUsername] = useState<string>("");
   const authService = new AuthService();
-  const token = Cookies.get('token') || "";
-  const decodedToken : DecodedToken = jwtDecode(token);
-  const { role } = decodedToken;
   
+
+  const { role } = decodedToken;
+
   const headers = {
     Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
-  
+
   const getUsername = async () => {
-    authService.current({ headers }).then(
-      function (response) {
+    authService
+      .current({ headers })
+      .then(function (response) {
         setUsername(response.data.username);
-      }
-    ).catch(
-      function (error) {
+      })
+      .catch(function (error) {
         console.error(error);
-      }
-    )
-  }
+      });
+  };
 
   React.useEffect(() => {
     getUsername();
@@ -109,9 +116,8 @@ export default function DashBoardBar() {
   };
   return (
     <>
-      <AppBar  open={open}>
-        <Toolbar
-        >
+      <AppBar open={open}>
+        <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
@@ -133,15 +139,15 @@ export default function DashBoardBar() {
           >
             <div className="flex items-center">
               <Link href="/">
-                <Image src={logo} alt="logo" width={70} height={70} />
+                <Image src={logo} alt="logo" width={70} height={70} priority={true} />
               </Link>
               <h1 className="text-black-600 ml-2 text-lg font-sans">
                 Global Hospital
               </h1>
             </div>
           </Typography>
-          <IconButton color="inherit">
-            <LogoutIcon fontSize="large" className="hidden sm:block" />
+          <IconButton color="inherit" href="/auth/sign-in">
+              <LogoutIcon fontSize="large" className="hidden sm:block" />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -168,9 +174,12 @@ export default function DashBoardBar() {
         </Toolbar>
         <Divider />
         <List component="nav">
+          {mainItem}
           {role === "PATIENT" ? patientItem : null}
-          {mainListItems}
-          </List>
+          {role != "ADMIN" ? historicItem : null}
+          {role === "ADMIN" ? adminItems : null}
+          {exitItem}
+        </List>
       </Drawer>
     </>
   );

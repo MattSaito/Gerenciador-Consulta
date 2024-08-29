@@ -1,44 +1,51 @@
 "use client";
 import * as React from "react";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import HistoricButton from "../../sub/buttons/HistoricButton";
-import Historic from "../../sub/dashboard/Historic";
-import { Copyright } from "@/utils/copyright";
-import AppointmentButton from "@/components/sub/buttons/AppointmentButton";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Cookies from "js-cookie";
+import Patient from "./Patient";
+import Doctor from "./Doctor";
+import { jwtDecode } from "jwt-decode";
+import Admin from "./Admin";
 
-export default function Doctor() {
+export interface DecodedToken {
+    role: string;
+  }
+
+const token = Cookies.get("token") || "";
+const decodedToken: DecodedToken = jwtDecode(token);
+
+  
+
+export default function Dashboard() {
+    const { role } = decodedToken;
+  let dashboardContent = null;
+
+  switch (role) {
+    case "PATIENT":
+      dashboardContent = <Patient />;
+      break;
+    case "DOCTOR":
+      dashboardContent = <Doctor />;
+      break;
+    case "ADMIN":
+      dashboardContent = <Admin />;
+      break;
+    default:
+      break;
+  }
 
   return (
-    <Container  maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={12} lg={12}>
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "start",
-          }}
-        >
-          <HistoricButton />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={12} lg={12}>
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            overflowX: "auto",
-          }}
-        >
-          <Historic />
-        </Paper>
-      </Grid>
-    </Grid>
-    <Copyright sx={{ pt: 4 }} />
-  </Container>
-);
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        height: "100vh",
+        overflow: "auto",
+      }}
+    >
+      <Toolbar />
+      {dashboardContent}
+    </Box>
+  );
 }

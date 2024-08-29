@@ -1,19 +1,23 @@
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
-import {
-  IconButton,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  Button,
-} from "@mui/material";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import { IconButton, Typography } from "@mui/material";
 import Link from "next/link";
 
-export default function Appointment() {
+interface DashboardButtonProps {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  link: string;
+}
+
+const DashboardButton: React.FC<DashboardButtonProps> = ({
+  icon,
+  title,
+  subtitle,
+  link,
+}) => {
   const theme = useTheme();
+
   return (
     <React.Fragment>
       <div
@@ -26,7 +30,7 @@ export default function Appointment() {
           alignItems: "center",
         }}
       >
-        <Link href="/auth/sign-in/dashboard/book-an-appointment">
+        <Link href={link}>
           <IconButton
             size="large"
             style={{
@@ -35,7 +39,7 @@ export default function Appointment() {
               borderRadius: 8,
             }}
           >
-            <LibraryAddIcon fontSize="large" />
+            {icon}
           </IconButton>
         </Link>
         <Typography
@@ -43,18 +47,18 @@ export default function Appointment() {
           style={{ marginTop: theme.spacing(1) }}
           className="font-helvetica"
         >
-          Agendar Minha Consulta
+          {title}
         </Typography>
         <Typography
           variant="caption"
           color="primary"
           style={{ marginTop: theme.spacing(1) }}
         >
-          <Link href="/auth/sign-in/dashboard/book-an-appointment">
-            Agendar Consulta
-          </Link>
+          <Link href={link}>{`${subtitle}`}</Link>
         </Typography>
       </div>
     </React.Fragment>
   );
-}
+};
+
+export default DashboardButton;

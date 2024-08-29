@@ -4,28 +4,31 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Title from "./Title";
+import Title from "../sub/dashboard/Title";
 import Button from "@mui/material/Button";
 import { AppointmentService } from "@/app/service/Services";
 import Cookies from "js-cookie";
-import CancelButton from "../buttons/CancelButton";
+import CancelButton from "../sub/buttons/CancelButton";
 import { UUID } from "crypto";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { DecodedToken } from "@/components/main/dashboards/Dashboard";
 import { jwtDecode } from "jwt-decode";
 
-interface Appointment {
+interface DetailedAppointment {
   id: UUID;
   doctor: string;
-  patient: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   time: string;
   date: string;
   status: string;
 }
 
 const token = Cookies.get("token") || "";
-const decodedToken : DecodedToken = jwtDecode(token);
+const decodedToken: DecodedToken = jwtDecode(token, { header: true });
 const headers = {
   Authorization: `Bearer ${token}`,
   "Content-Type": "application/json",
@@ -37,8 +40,10 @@ const params = {
   orderBy: "date",
 };
 
-export default function Historic() {
-  const [appointments, setAppointments] = React.useState<Appointment[]>([]);
+export default function DetailedAppointmentTable() {
+  const [detailedAppointments, setDetailedAppointments] = React.useState<
+    DetailedAppointment[]
+  >([]);
   const [pageNumber, setPageNumber] = React.useState<number>(params.page);
   const service = new AppointmentService();
   const { role } = decodedToken;
@@ -48,9 +53,9 @@ export default function Historic() {
       console.error(error);
     });
     await service
-      .getAllForAuthenticatedUser({ headers }, { ...params, page })
+      .getAll({ headers }, { ...params, page })
       .then(function (response) {
-        setAppointments(response.data.content || []);
+        setDetailedAppointments(response.data.content || []);
       })
       .catch(function (error) {
         console.error(error);
@@ -84,55 +89,37 @@ export default function Historic() {
     getAppointments(prevPage);
   };
 
-  const handleCancel = async (id: UUID) => {
-    await service
-      .cancel({ headers }, id)
-      .then(function (response) {
-        getAppointments(pageNumber);
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  };
-
   React.useEffect(() => {
     getAppointments(pageNumber);
   }, [pageNumber]);
 
   return (
     <React.Fragment>
-      <Title>Consultas Recentes</Title>
+      <Title>Lista de Consultas</Title>
       <Table size="medium">
         <TableHead>
           <TableRow>
-            {role === "PATIENT" ? (
-              <TableCell>Médico</TableCell>
-            ) : (
-              <TableCell>Paciente</TableCell>
-            )}
-            <TableCell>Horário</TableCell>
+            <TableCell>Nome</TableCell>
+            <TableCell>Sobrenome</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Telefone</TableCell>
             <TableCell>Data</TableCell>
+            <TableCell>Hora</TableCell>
+            <TableCell>Médico</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {appointments.map((appointment) => (
+          {detailedAppointments.map((appointment) => (
             <TableRow key={appointment.id}>
-              {role === "PATIENT" ? (<TableCell>{appointment.doctor}</TableCell>) :
-              (<TableCell>{appointment.patient}</TableCell>)}
-              <TableCell>{appointment.time}</TableCell>
+              <TableCell>{appointment.firstName}</TableCell>
+              <TableCell>{appointment.lastName}</TableCell>
+              <TableCell>{appointment.email}</TableCell>
+              <TableCell>{appointment.phone}</TableCell>
               <TableCell>{appointment.date}</TableCell>
+              <TableCell>{appointment.time}</TableCell>
+              <TableCell>{appointment.doctor}</TableCell>
               <TableCell>{getStatusLabel(appointment.status)}</TableCell>
-              <TableCell>
-                <CancelButton
-                  disabled={appointment.status != "ACTIVE"}
-                  onClick={handleCancel.bind(null, appointment.id)}
-                >
-                  Cancelar Consulta
-                </CancelButton>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>

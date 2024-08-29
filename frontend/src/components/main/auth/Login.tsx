@@ -34,7 +34,7 @@ export default function SignIn() {
     mode: "all",
     defaultValues: {
       login: "",
-      password: "",
+      password: ""
     },
     resolver: zodResolver(signInSchema),
   });
@@ -46,12 +46,12 @@ export default function SignIn() {
       service
         .login({
           login: values.login,
-          password: values.password,
+          password: values.password
         })
         .then(function (response) {
           setSuccess(true);
           const token = response.data.token;
-          Cookies.set('token', token, { expires: 1 })
+          Cookies.set('token', token, { sameSite: 'None', secure: true })
           router.push("/auth/sign-in/dashboard");
         })
         .catch(function (error) {
