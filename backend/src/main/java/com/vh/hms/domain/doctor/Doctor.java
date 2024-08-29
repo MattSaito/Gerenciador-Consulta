@@ -25,7 +25,7 @@ public class Doctor implements Serializable {
     private String specialization;
     private String CRM;
     private BigDecimal docFees;
-    @OneToMany(mappedBy = "doctor")
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<Appointment> appointments = new HashSet<>();
 
     public Doctor() {}
