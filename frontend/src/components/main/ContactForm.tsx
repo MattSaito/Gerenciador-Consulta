@@ -138,15 +138,16 @@ export default function ContactForm() {
                 )}
               />
               <div className="my-5 w-100">
-                <ButtonOutline type="submit">Cadastrar</ButtonOutline>
+                <ButtonOutline type="submit">Enviar</ButtonOutline>
               </div>
               <div className="bg-slate-100 flex flex-col h-0 w-0"></div>
             </Box>
           </>
         ) : (
           <Typography component="h1" variant="h3" justifyContent={"center"}>
-            Mensagem Enviada! &#129309;
-          </Typography>
+          Mensagem Enviada!
+          &#129309;
+        </Typography>
         )}
       </Box>
     </>

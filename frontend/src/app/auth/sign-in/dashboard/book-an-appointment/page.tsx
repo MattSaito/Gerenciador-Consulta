@@ -12,17 +12,17 @@ export default function Page() {
     >
       <Container sx={{ mt: 4, mb: 4 }}>
         <Grid container spacing={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "start",
-              mt: 6,
-            }}
-          >
-            <AppointmentForm />
-          </Paper>
+            <Paper
+              sx={{
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                mt: 6,  
+              }}
+            >
+              <AppointmentForm />
+            </Paper>
         </Grid>
       </Container>
     </Box>
