@@ -5,7 +5,7 @@ import ButtonOutline from "../sub/buttons/ButtonOutline";
 import Image from "next/image";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "../sub/nav/MenuOverlay";
-import logo from "../../../public/logo.svg";
+import logo from "../../../public/logo.svg"
 
 const navLinks = [
   {
@@ -22,6 +22,7 @@ const Navbar = () => {
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [scrollActive, setScrollActive] = useState(false);
   const [navbarOpen, setNavbarOpen] = useState(false);
+
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
@@ -40,9 +41,11 @@ const Navbar = () => {
         <div className="col-start-1  col-end-2 flex items-center h-10 w-auto justify-between sm:justify-normal">
           <div className="flex items-center">
             <Link href="/">
-              <Image src={logo} alt="logo" width={70} height={70} />
+            <Image src={logo} alt="logo" width={70} height={70}/>
             </Link>
-            <h1 className="text-black-600 ml-2 text-lg">Global Hospital</h1>
+            <h1 className="text-black-600 ml-2 text-lg">
+              Global Hospital
+            </h1>
           </div>
           <div className="mobile-menu flex md:hidden">
             {!navbarOpen ? (

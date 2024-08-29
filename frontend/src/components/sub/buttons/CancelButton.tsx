@@ -7,7 +7,7 @@ interface ButtonOutlineProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const ButtonOutline: React.FC<ButtonOutlineProps> = ({ children, type = "button",
 ...props }) => {
   return (
-    <button className="font-medium tracking-wide py-2 px-5 sm:px-8 border border-[#478DF7]  text-[#478DF7]  bg-white-500 outline-none rounded-l-full rounded-r-full capitalize hover:bg-[#478DF7] hover:text-white transition-all"
+    <button className="font-medium tracking-wide py-2 px-5 sm:px-8 border border-[#f44336] text-[#f44336]  bg-white-500 outline-none rounded-l-full rounded-r-full capitalize hover:bg-[#f44336] hover:text-white transition-all"
     type={type}{...props}
     >
       {" "}

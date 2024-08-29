@@ -12,13 +12,18 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems } from "../../../utils/listItems";
+import { mainListItems, patientItem } from "../../../utils/listItems";
 
 import Image from "next/image";
 import logo from "../../../../public/blueLogo.svg";
 
-import LogoutIcon from "@mui/icons-material/Logout";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { AuthService } from "@/app/service/Services";
+import { DecodedToken } from "@/components/main/dashboards/Dashboard";
+import { jwtDecode } from "jwt-decode";
 
 const drawerWidth: number = 240;
 
@@ -71,17 +76,41 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function DashBoardBar() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>("");
+  const authService = new AuthService();
+  const token = Cookies.get('token') || "";
+  const decodedToken : DecodedToken = jwtDecode(token);
+  const { role } = decodedToken;
+  
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+  
+  const getUsername = async () => {
+    authService.current({ headers }).then(
+      function (response) {
+        setUsername(response.data.username);
+      }
+    ).catch(
+      function (error) {
+        console.error(error);
+      }
+    )
+  }
+
+  React.useEffect(() => {
+    getUsername();
+  }, []);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
   return (
     <>
-      <AppBar position="absolute" open={open}>
+      <AppBar  open={open}>
         <Toolbar
-          sx={{
-            pr: "24px",
-          }}
         >
           <IconButton
             edge="start"
@@ -131,14 +160,17 @@ export default function DashBoardBar() {
             noWrap
             sx={{ flexGrow: 1, ml: 2, whiteSpace: "pre-wrap", maxWidth: 150 }}
           >
-            Administrador
+            {username}
           </Typography>
           <IconButton onClick={toggleDrawer}>
             <ChevronLeftIcon />
           </IconButton>
         </Toolbar>
         <Divider />
-        <List component="nav">{mainListItems}</List>
+        <List component="nav">
+          {role === "PATIENT" ? patientItem : null}
+          {mainListItems}
+          </List>
       </Drawer>
     </>
   );

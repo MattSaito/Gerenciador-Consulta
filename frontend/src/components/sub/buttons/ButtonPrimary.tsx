@@ -17,8 +17,7 @@ const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
         "py-3 lg:py-4 px-12 lg:px-16 text-white font-semibold rounded-lg  bg-[#478DF7] hover:bg-blue-800 transition-all outline-none " +
         (addClass || "")
       }
-      type={type}
-      {...props}
+      type={type}{...props}
     >
       {children}
     </button>

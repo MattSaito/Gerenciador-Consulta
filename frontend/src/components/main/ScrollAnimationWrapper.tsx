@@ -5,11 +5,7 @@ interface ScrollAnimationWrapperProps {
   className?: string;
 }
 
-const ScrollAnimationWrapper: React.FC<ScrollAnimationWrapperProps> = ({
-  children,
-  className,
-  ...props
-}) => {
+const ScrollAnimationWrapper: React.FC<ScrollAnimationWrapperProps> = ({ children, className, ...props }) => {
   return (
     <motion.div
       initial="offscreen"

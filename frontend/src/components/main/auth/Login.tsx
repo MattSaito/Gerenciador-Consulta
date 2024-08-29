@@ -9,9 +9,9 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import background from "../../../public/a.png";
+import background from "../../../../public/a.png";
 import Image from "next/image";
-import ButtonOutline from "../sub/buttons/ButtonOutline";
+import ButtonOutline from "../../sub/buttons/ButtonOutline";
 import { AuthService } from "@/app/service/Services";
 import { defaultTheme } from "@/utils/defaultTheme";
 import { ThemeProvider } from "@mui/material/styles";
@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, signInSchema } from "@/utils/schema";
 import { Controller, useForm } from "react-hook-form";
 import { redirect, useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
 export default function SignIn() {
   const service = new AuthService();
@@ -51,7 +51,7 @@ export default function SignIn() {
         .then(function (response) {
           setSuccess(true);
           const token = response.data.token;
-          Cookies.set("token", token, { expires: 1 });
+          Cookies.set('token', token, { expires: 1 })
           router.push("/auth/sign-in/dashboard");
         })
         .catch(function (error) {

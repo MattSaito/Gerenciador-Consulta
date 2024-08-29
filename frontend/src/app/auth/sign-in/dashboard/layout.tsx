@@ -9,10 +9,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ThemeProvider theme={defaultTheme}>
-        <Box sx={{ display: "flex" }}>
-          <CssBaseline />
+        <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
           <DashBoardBar />
-          {children}
+          <Box sx={{ flex: 1, overflow: "auto" }}>
+            <CssBaseline />
+            {children}
+          </Box>
         </Box>
       </ThemeProvider>
     </>

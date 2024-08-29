@@ -1,4 +1,4 @@
-import SignIn from "@/components/main/Login";
+import SignIn from "@/components/main/auth/Login";
 import AuthNav from "@/components/sub/nav/AuthNav";
 
 export default function Page() {
