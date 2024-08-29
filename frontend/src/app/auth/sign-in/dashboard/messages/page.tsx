@@ -1,9 +1,9 @@
-import Dashboard from "@/components/main/dashboards/Dashboard";
+import MessagesList from "@/components/lists/MessagesList";
 
 const Page = () => {
   return (
     <main>
-      <Dashboard />
+      <MessagesList />
     </main>
   );
 };

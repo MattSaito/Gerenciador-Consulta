@@ -1,9 +1,9 @@
-import Dashboard from "@/components/main/dashboards/Dashboard";
+import PatientList from "@/components/lists/PatientList";
 
 const Page = () => {
   return (
     <main>
-      <Dashboard />
+      <PatientList />
     </main>
   );
 };

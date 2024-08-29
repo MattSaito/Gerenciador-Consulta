@@ -12,13 +12,23 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems } from "../../../utils/listItems";
+import {
+  adminItems,
+  exitItem,
+  historicItem,
+  mainItem,
+  patientItem,
+} from "../../../utils/listItems";
 
 import Image from "next/image";
-import logo from "../../../../public/blueLogo.svg";
-
+import logo from "../../../../public/blueLogo.svg"
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { AuthService } from "@/app/service/Services";
+import { DecodedToken } from "@/components/main/dashboards/Dashboard";
+import { jwtDecode } from "jwt-decode";
 
 const drawerWidth: number = 240;
 
@@ -70,19 +80,44 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+const token = Cookies.get("token") || "";
+const decodedToken: DecodedToken = jwtDecode(token);
+
 export default function DashBoardBar() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState<boolean>(false); 
+  const [username, setUsername] = useState<string>("");
+  const authService = new AuthService();
+  
+
+  const { role } = decodedToken;
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  const getUsername = async () => {
+    authService
+      .current({ headers })
+      .then(function (response) {
+        setUsername(response.data.username);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+
+  React.useEffect(() => {
+    getUsername();
+  }, []);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
   return (
     <>
-      <AppBar position="absolute" open={open}>
-        <Toolbar
-          sx={{
-            pr: "24px",
-          }}
-        >
+      <AppBar open={open}>
+        <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
@@ -104,15 +139,15 @@ export default function DashBoardBar() {
           >
             <div className="flex items-center">
               <Link href="/">
-                <Image src={logo} alt="logo" width={70} height={70} />
+                <Image src={logo} alt="logo" width={70} height={70} priority={true} />
               </Link>
               <h1 className="text-black-600 ml-2 text-lg font-sans">
                 Global Hospital
               </h1>
             </div>
           </Typography>
-          <IconButton color="inherit">
-            <LogoutIcon fontSize="large" className="hidden sm:block" />
+          <IconButton color="inherit" href="/auth/sign-in">
+              <LogoutIcon fontSize="large" className="hidden sm:block" />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -131,14 +166,20 @@ export default function DashBoardBar() {
             noWrap
             sx={{ flexGrow: 1, ml: 2, whiteSpace: "pre-wrap", maxWidth: 150 }}
           >
-            Administrador
+            {username}
           </Typography>
           <IconButton onClick={toggleDrawer}>
             <ChevronLeftIcon />
           </IconButton>
         </Toolbar>
         <Divider />
-        <List component="nav">{mainListItems}</List>
+        <List component="nav">
+          {mainItem}
+          {role === "PATIENT" ? patientItem : null}
+          {role != "ADMIN" ? historicItem : null}
+          {role === "ADMIN" ? adminItems : null}
+          {exitItem}
+        </List>
       </Drawer>
     </>
   );
