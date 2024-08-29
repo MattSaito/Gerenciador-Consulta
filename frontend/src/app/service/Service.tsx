@@ -57,4 +57,13 @@ export class AppointmentService {
   }
 }
 
-export class DoctorService {}
+export class DoctorService {
+  getAllBySpecialization(
+    specialization: string,
+    headers: AxiosRequestConfig
+  ) {
+    return axiosInstance.get(`/doctors/list/${specialization}`, {
+      ...headers,
+    });
+  }
+}
