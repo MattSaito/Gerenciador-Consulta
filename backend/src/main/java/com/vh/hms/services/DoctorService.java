@@ -1,9 +1,11 @@
 package com.vh.hms.services;
 
+import com.vh.hms.domain.appointment.AppointmentStatus;
 import com.vh.hms.domain.doctor.Doctor;
 import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.doctor.DoctorResponseDTO;
 import com.vh.hms.repositories.DoctorRepository;
+import com.vh.hms.services.exceptions.DatabaseException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
@@ -49,8 +51,11 @@ public class DoctorService {
 
     @Transactional
     public void deleteByEmail(String email) {
+        Doctor doctor = notNullValidator(email);
+        if (doctor.getAppointments().stream().anyMatch(a -> a.getStatus() == AppointmentStatus.ACTIVE)) throw new DatabaseException(); // Database Exception
         doctorRepository.deleteByEmail(email);
     }
+
 
     private Doctor notNullValidator(String email) {
         Optional<Doctor> doctorOptional = doctorRepository.findByEmailEquals(email);
