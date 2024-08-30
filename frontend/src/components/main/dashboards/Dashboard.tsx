@@ -2,23 +2,13 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Cookies from "js-cookie";
 import Patient from "./Patient";
 import Doctor from "./Doctor";
-import { jwtDecode } from "jwt-decode";
 import Admin from "./Admin";
-
-export interface DecodedToken {
-    role: string;
-  }
-
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token);
-
-  
+import { useAuth } from "@/utils/authContext";
 
 export default function Dashboard() {
-    const { role } = decodedToken;
+  const role = useAuth().role;
   let dashboardContent = null;
 
   switch (role) {

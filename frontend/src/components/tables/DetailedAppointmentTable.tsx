@@ -7,13 +7,12 @@ import TableRow from "@mui/material/TableRow";
 import Title from "../sub/dashboard/Title";
 import Button from "@mui/material/Button";
 import { AppointmentService } from "@/app/service/Services";
-import Cookies from "js-cookie";
-import CancelButton from "../sub/buttons/CancelButton";
+
 import { UUID } from "crypto";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { DecodedToken } from "@/components/main/dashboards/Dashboard";
-import { jwtDecode } from "jwt-decode";
+
+import { useAuth } from "@/utils/authContext";
 
 interface DetailedAppointment {
   id: UUID;
@@ -27,33 +26,27 @@ interface DetailedAppointment {
   status: string;
 }
 
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token, { header: true });
-const headers = {
-  Authorization: `Bearer ${token}`,
-  "Content-Type": "application/json",
-};
-const params = {
-  page: 0,
-  linesPerPage: 8,
-  direction: "DESC",
-  orderBy: "date",
-};
-
 export default function DetailedAppointmentTable() {
+  const { token } = useAuth();
+
+  const params = {
+    page: 0,
+    linesPerPage: 8,
+    direction: "DESC",
+    orderBy: "date",
+  };
   const [detailedAppointments, setDetailedAppointments] = React.useState<
     DetailedAppointment[]
   >([]);
   const [pageNumber, setPageNumber] = React.useState<number>(params.page);
   const service = new AppointmentService();
-  const { role } = decodedToken;
 
   const getAppointments = async (page: number) => {
-    await service.finish({ headers }).catch(function (error) {
+    await service.finish(token).catch(function (error) {
       console.error(error);
     });
     await service
-      .getAll({ headers }, { ...params, page })
+      .getAll(token, { ...params, page })
       .then(function (response) {
         setDetailedAppointments(response.data.content || []);
       })
@@ -90,8 +83,8 @@ export default function DetailedAppointmentTable() {
   };
 
   React.useEffect(() => {
-    getAppointments(pageNumber);
-  }, [pageNumber]);
+    if (token) getAppointments(pageNumber);
+  }, [pageNumber, token]);
 
   return (
     <React.Fragment>

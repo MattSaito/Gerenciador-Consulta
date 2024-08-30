@@ -6,15 +6,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "../sub/dashboard/Title";
 import Button from "@mui/material/Button";
-import { DoctorService, MessageService } from "@/app/service/Services";
+import { MessageService } from "@/app/service/Services";
 import Cookies from "js-cookie";
 import CancelButton from "../sub/buttons/CancelButton";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { DecodedToken } from "@/components/main/dashboards/Dashboard";
-import { jwtDecode } from "jwt-decode";
-import ButtonOutline from "../sub/buttons/ButtonOutline";
 import { UUID } from "crypto";
+import { useAuth } from "@/utils/authContext";
 
 interface Message {
   id: UUID;
@@ -24,12 +22,6 @@ interface Message {
   description: number;
 }
 
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token);
-const headers = {
-  Authorization: `Bearer ${token}`,
-  "Content-Type": "application/json",
-};
 const params = {
   page: 0,
   linesPerPage: 8,
@@ -38,13 +30,14 @@ const params = {
 };
 
 export default function MessagesTable() {
+  const { token } = useAuth();
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [pageNumber, setPageNumber] = React.useState<number>(params.page);
   const service = new MessageService();
 
   const getMessages = async (page: number) => {
     await service
-      .getAll({ headers }, { ...params, page })
+      .getAll(token, { ...params, page })
       .then(function (response) {
         setMessages(response.data.content || []);
       })
@@ -66,14 +59,14 @@ export default function MessagesTable() {
   };
 
   const handleDelete = async (id: UUID) => {
-    await service.delete({ headers }, id).catch(function (error) {
+    await service.delete(token, id).catch(function (error) {
       console.error(error);
     });
   };
 
   React.useEffect(() => {
-    getMessages(pageNumber);
-  }, [pageNumber]);
+    if (token) getMessages(pageNumber);
+  }, [pageNumber, token]);
 
   return (
     <React.Fragment>
