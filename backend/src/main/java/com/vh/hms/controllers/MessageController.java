@@ -15,28 +15,29 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/messages")
 public class MessageController {
     @Autowired
     MessageService messageService;
 
-    @GetMapping(value = "/messages")
+    @GetMapping
     public ResponseEntity<Page<MessageDTO>> getAll(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "sender") String orderBy)
     {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(messageService.findAllPaged(pageRequest));
     }
 
-    @GetMapping(value = "/messages/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<MessageDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(messageService.findById(id));
     }
-    @PostMapping(value = "/contact")
+    @PostMapping
     public ResponseEntity<MessageDTO> create(@RequestBody @Valid MessageDTO messageDTO) {
         URI url = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(messageService.create(messageDTO)).toUri();
         return ResponseEntity.created(url).build();
     }
 
-    @DeleteMapping("/messages/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         messageService.deleteById(id);
         return ResponseEntity.ok().build();

@@ -4,7 +4,6 @@ import com.vh.hms.domain.doctor.Doctor;
 import com.vh.hms.domain.patient.Patient;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
