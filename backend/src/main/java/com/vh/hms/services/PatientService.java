@@ -47,7 +47,7 @@ public class PatientService {
     @Transactional
     public String create(PatientRequestDTO patientRequestDTO) {
         Patient patient = new Patient();
-        BeanUtils.copyProperties(patient, patientRequestDTO);
+        BeanUtils.copyProperties(patientRequestDTO, patient);
         return patientRepository.save(patient).getEmail();
     }
     @Transactional

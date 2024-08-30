@@ -11,6 +11,8 @@ import java.util.UUID;
 public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
     <S extends Doctor> Page<S> findAllBySpecialization(String specialization, Pageable pageable);
     Optional<Doctor> findByEmailEquals(String email);
+
+    Optional<Doctor> findByUsernameEquals(String username);
     boolean existsByUsernameEquals(String username);
     void deleteByEmail(String email);
 }
