@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
@@ -8,27 +7,25 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import {
-  adminItems,
-  exitItem,
-  historicItem,
-  mainItem,
-  patientItem,
-} from "../../../utils/listItems";
-
 import Image from "next/image";
-import logo from "../../../../public/blueLogo.svg"
+import logo from "../../../../public/blueLogo.svg";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Cookies from "js-cookie";
-import { useState } from "react";
-import { AuthService } from "@/app/service/Services";
-import { DecodedToken } from "@/components/main/dashboards/Dashboard";
+import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useAuth } from "@/utils/authContext";
+import { AuthService } from "@/app/service/Services";
+import {
+  mainItem,
+  patientItem,
+  historicItem,
+  adminItems,
+  exitItem,
+} from "@/utils/listItems";
 
 const drawerWidth: number = 240;
 
@@ -80,40 +77,33 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token);
-
 export default function DashBoardBar() {
-  const [open, setOpen] = useState<boolean>(false); 
+  const [open, setOpen] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const authService = new AuthService();
-  
+  const { token, role } = useAuth();
 
-  const { role } = decodedToken;
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("role");
   };
 
-  const getUsername = async () => {
-    authService
-      .current({ headers })
-      .then(function (response) {
-        setUsername(response.data.username);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  };
-
-  React.useEffect(() => {
-    getUsername();
-  }, []);
+  useEffect(() => {
+    if (token && role)
+      authService
+        .current(token)
+        .then(function (response) {
+          setUsername(response.data.username);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+  }, [token, role]);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
   return (
     <>
       <AppBar open={open}>
@@ -139,15 +129,25 @@ export default function DashBoardBar() {
           >
             <div className="flex items-center">
               <Link href="/">
-                <Image src={logo} alt="logo" width={70} height={70} priority={true} />
+                <Image
+                  src={logo}
+                  alt="logo"
+                  width={70}
+                  height={70}
+                  priority={true}
+                />
               </Link>
               <h1 className="text-black-600 ml-2 text-lg font-sans">
                 Global Hospital
               </h1>
             </div>
           </Typography>
-          <IconButton color="inherit" href="/auth/sign-in">
-              <LogoutIcon fontSize="large" className="hidden sm:block" />
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+            href="/auth/sign-in"
+          >
+            <LogoutIcon fontSize="large" className="hidden sm:block" />
           </IconButton>
         </Toolbar>
       </AppBar>

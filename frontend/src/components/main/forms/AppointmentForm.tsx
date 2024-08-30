@@ -4,23 +4,19 @@ import { useEffect, useState } from "react";
 import { AppointmentService, DoctorService } from "@/app/service/Services";
 import { Typography, TextField, Box, MenuItem } from "@mui/material";
 import ButtonOutline from "../../sub/buttons/ButtonOutline";
-
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import Cookies from "js-cookie";
-import {
-  mappedSpecializations,
-  specializations,
-} from "@/utils/specializations";
+import { mappedSpecializations } from "@/utils/specializations";
+import { useAuth } from "@/utils/authContext";
+import Title from "@/components/sub/dashboard/Title";
 
 const eightAM = dayjs().set("hour", 8).startOf("hour");
 const sixPM = dayjs().set("hour", 18).startOf("hour");
 
-const token = Cookies.get("token");
-
 export default function AppointmentForm() {
+  const { token } = useAuth();
   const doctorService = new DoctorService();
   const appointmentService = new AppointmentService();
   const [doctors, setDoctors] = useState<{ value: any }[]>([]);
@@ -34,86 +30,70 @@ export default function AppointmentForm() {
 
   const isWeekend = (date: Dayjs) => {
     const day = date.day();
-
     return day === 0 || day === 6;
   };
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
-
   const loadDoctors = async (specialization: string) => {
-    const response = doctorService
-      .getAllBySpecialization(specialization, {
-        headers,
-      })
-      .then(function (response) {
-        if (response.data && Array.isArray(response.data.content)) {
-          const doctorsList = response.data.content.map(
-            (doctor: { username: any }) => ({
-              value: doctor.username,
-            })
-          );
-          setDoctors(doctorsList);
-        } else {
-          setDoctors([]);
-        }
-      });
+    try {
+      const response = await doctorService.getAllBySpecialization(
+        specialization,
+        token
+      );
+      if (response.data && Array.isArray(response.data.content)) {
+        const doctorsList = response.data.content.map(
+          (doctor: { username: any }) => ({
+            value: doctor.username,
+          })
+        );
+        setDoctors(doctorsList);
+      } else {
+        setDoctors([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    const initialDoctors = [].map((value) => ({ value }));
-    setDoctors(initialDoctors);
-  }, []);
-
-  useEffect(() => {
-    loadDoctors(specialization);
-  }, [specialization]);
+    if (token) loadDoctors(specialization);
+  }, [specialization, token]);
 
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    appointmentService
-      .insert(
+    try {
+      await appointmentService.insert(
         {
           doctor: doctor,
           date: date.format("DD/MM/YYYY"),
           time: time.format("HH:mm"),
         },
-        { headers }
-      )
-      .then(function (response) {
-        setSpecialization("Clínica");
-        setDoctor("");
-        setDate(dayjs());
-        setTime(eightAM);
-        setMesssage("Consulta marcada com sucesso!");
-        setColor("primary");
-        setSuccess(true);
-      })
-      .catch(function (error) {
-        console.error(error);
-        setMesssage("Falha ao marcar consulta!");
-        setSuccess(false);
-        setColor("red");
-      });
+        token
+      );
+      setSpecialization("Clínica");
+      setDoctor("");
+      setDate(dayjs());
+      setTime(eightAM);
+      setMesssage("Consulta marcada com sucesso!");
+      setColor("primary");
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+      setMesssage("Falha ao marcar consulta!");
+      setSuccess(false);
+      setColor("red");
+    }
   };
 
   return (
     <>
-      <Typography
-        component="h2"
-        variant="h6"
-        color={color}
-        gutterBottom
-        className="flex justify-center"
-      >
-        {message}
-      </Typography>
+      <div className="flex justify-center">
+        <Title>{message}</Title>
+      </div>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "start",
+          alignItems: "center",
         }}
       >
         <Box sx={{ mt: 1 }} component="form" onSubmit={onSubmit} noValidate>

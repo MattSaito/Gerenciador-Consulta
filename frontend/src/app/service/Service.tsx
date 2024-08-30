@@ -5,6 +5,18 @@ export const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
 });
 
+export function getHeaders(token: string | null): AxiosRequestConfig {
+  if (token) {
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+  }
+  return {};
+}
+
 export class MessageService {
   insert(body: {
     sender: string;
@@ -15,12 +27,13 @@ export class MessageService {
     return axiosInstance.post("/messages", body);
   }
 
-  delete(headers: AxiosRequestConfig, id: string) {
+  delete(token: string | null, id: string) {
+    const headers = getHeaders(token);
     return axiosInstance.delete(`/messages/${id}`, headers);
   }
 
   getAll(
-    headers: AxiosRequestConfig,
+    token: string | null,
     params: {
       page?: number;
       linesPerPage?: number;
@@ -28,6 +41,7 @@ export class MessageService {
       orderBy?: string;
     }
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/messages", {
       ...headers,
       params: {
@@ -57,7 +71,8 @@ export class AuthService {
     return axiosInstance.post("/auth/register", body);
   }
 
-  current(headers: AxiosRequestConfig) {
+  current(token: string | null) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/auth/current", headers);
   }
 }
@@ -65,21 +80,24 @@ export class AuthService {
 export class AppointmentService {
   insert(
     body: { doctor: string; date: string; time: string },
-    headers: AxiosRequestConfig
+    token: string | null
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.post("/appointments/booking", body, headers);
   }
 
-  cancel(headers: AxiosRequestConfig, id: UUID) {
+  cancel(token: string | null, id: UUID) {
+    const headers = getHeaders(token);
     return axiosInstance.patch(`/appointments/cancel/${id}`, null, headers);
   }
 
-  finish(headers: AxiosRequestConfig) {
+  finish(token: string | null) {
+    const headers = getHeaders(token);
     return axiosInstance.patch("/appointments/finish", null, headers);
   }
 
   getAll(
-    headers: AxiosRequestConfig,
+    token: string | null,
     params: {
       page?: number;
       linesPerPage?: number;
@@ -87,6 +105,7 @@ export class AppointmentService {
       orderBy?: string;
     }
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/appointments", {
       ...headers,
       params: {
@@ -99,7 +118,7 @@ export class AppointmentService {
   }
 
   getAllForAuthenticatedUser(
-    headers: AxiosRequestConfig,
+    token: string | null,
     params: {
       page?: number;
       linesPerPage?: number;
@@ -107,6 +126,7 @@ export class AppointmentService {
       orderBy?: string;
     }
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/appointments/my", {
       ...headers,
       params: {
@@ -120,7 +140,8 @@ export class AppointmentService {
 }
 
 export class DoctorService {
-  getByEmail(headers: AxiosRequestConfig, email: string) {
+  getByEmail(token: string | null, email: string) {
+    const headers = getHeaders(token);
     return axiosInstance.get(`/doctors/${email}`, headers);
   }
 
@@ -133,23 +154,24 @@ export class DoctorService {
       CRM: string;
       password: string;
     },
-    headers: AxiosRequestConfig
+    token: string | null
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.post("/doctors/register", body, headers);
   }
 
-  delete(headers: AxiosRequestConfig, email: string) {
+  delete(token: string | null, email: string) {
+    const headers = getHeaders(token);
     return axiosInstance.delete(`/doctors/${email}`, headers);
   }
 
-  getAllBySpecialization(specialization: string, headers: AxiosRequestConfig) {
-    return axiosInstance.get(`/doctors/list/${specialization}`, {
-      ...headers,
-    });
+  getAllBySpecialization(specialization: string, token: string | null) {
+    const headers = getHeaders(token);
+    return axiosInstance.get(`/doctors/list/${specialization}`, headers);
   }
 
   getAll(
-    headers: AxiosRequestConfig,
+    token: string | null,
     params: {
       page?: number;
       linesPerPage?: number;
@@ -157,6 +179,7 @@ export class DoctorService {
       orderBy?: string;
     }
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/doctors", {
       ...headers,
       params: {
@@ -171,7 +194,7 @@ export class DoctorService {
 
 export class PatientService {
   getAll(
-    headers: AxiosRequestConfig,
+    token: string | null,
     params: {
       page?: number;
       linesPerPage?: number;
@@ -179,6 +202,7 @@ export class PatientService {
       orderBy?: string;
     }
   ) {
+    const headers = getHeaders(token);
     return axiosInstance.get("/patients", {
       ...headers,
       params: {
@@ -189,7 +213,9 @@ export class PatientService {
       },
     });
   }
-  getByEmail(headers: AxiosRequestConfig, email: string) {
+
+  getByEmail(token: string | null, email: string) {
+    const headers = getHeaders(token);
     return axiosInstance.get(`/patients/${email}`, headers);
   }
 }

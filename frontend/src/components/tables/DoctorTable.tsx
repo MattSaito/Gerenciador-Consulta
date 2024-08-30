@@ -10,7 +10,6 @@ import { DoctorService } from "@/app/service/Services";
 import Cookies from "js-cookie";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { DecodedToken } from "@/components/main/dashboards/Dashboard";
 import { jwtDecode } from "jwt-decode";
 import {
   Box,
@@ -23,6 +22,7 @@ import {
 
 import CancelButton from "../sub/buttons/CancelButton";
 import { useState } from "react";
+import { useAuth } from "@/utils/authContext";
 
 interface Doctor {
   username: string;
@@ -31,13 +31,6 @@ interface Doctor {
   docFees: number;
   CRM: string;
 }
-
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token, { header: true });
-const headers = {
-  Authorization: `Bearer ${token}`,
-  "Content-Type": "application/json",
-};
 const params = {
   page: 0,
   linesPerPage: 8,
@@ -46,6 +39,7 @@ const params = {
 };
 
 export default function DoctorTable() {
+  const { token } = useAuth();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(params.page);
   const service = new DoctorService();
@@ -56,7 +50,7 @@ export default function DoctorTable() {
 
   const getDoctors = async (page: number) => {
     await service
-      .getAll({ headers }, { ...params, page })
+      .getAll(token, { ...params, page })
       .then(function (response) {
         setDoctors(response.data.content || []);
       })
@@ -67,7 +61,7 @@ export default function DoctorTable() {
 
   const getDoctorByEmail = async (email: string) => {
     await service
-      .getByEmail({ headers }, email)
+      .getByEmail(token, email)
       .then(function (response) {
         setDoctors([response.data]);
       })
@@ -97,7 +91,7 @@ export default function DoctorTable() {
 
   const handleDelete = async (email: string) => {
     service
-      .delete({ headers }, email)
+      .delete(token, email)
       .then(function (response) {
         getDoctors(pageNumber);
       })
@@ -109,8 +103,8 @@ export default function DoctorTable() {
   };
 
   React.useEffect(() => {
-    getDoctors(pageNumber);
-  }, [pageNumber]);
+    if (token) getDoctors(pageNumber);
+  }, [pageNumber, token]);
 
   return (
     <React.Fragment>
@@ -125,7 +119,7 @@ export default function DoctorTable() {
           onChange={(e) => setSearchEmail(e.target.value)}
         />
         <Button
-          variant="contained"
+          variant="outlined"
           size="medium"
           sx={{ ml: 1, textTransform: "none" }}
           onClick={handleSearch}

@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,13 +8,11 @@ import TableRow from "@mui/material/TableRow";
 import Title from "../sub/dashboard/Title";
 import Button from "@mui/material/Button";
 import { AppointmentService } from "@/app/service/Services";
-import Cookies from "js-cookie";
 import CancelButton from "../sub/buttons/CancelButton";
 import { UUID } from "crypto";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { DecodedToken } from "@/components/main/dashboards/Dashboard";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "@/utils/authContext";
 
 interface Appointment {
   id: UUID;
@@ -24,31 +23,26 @@ interface Appointment {
   status: string;
 }
 
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token);
-const headers = {
-  Authorization: `Bearer ${token}`,
-  "Content-Type": "application/json",
-};
-const params = {
-  page: 0,
-  linesPerPage: 8,
-  direction: "DESC",
-  orderBy: "date",
-};
-
 export default function AppointmentTable() {
+  const { token, role } = useAuth();
+
+  const params = {
+    page: 0,
+    linesPerPage: 8,
+    direction: "DESC",
+    orderBy: "date",
+  };
+
   const [appointments, setAppointments] = React.useState<Appointment[]>([]);
   const [pageNumber, setPageNumber] = React.useState<number>(params.page);
   const service = new AppointmentService();
-  const { role } = decodedToken;
 
   const getAppointments = async (page: number) => {
-    await service.finish({ headers }).catch(function (error) {
+    await service.finish(token).catch(function (error) {
       console.error(error);
     });
     await service
-      .getAllForAuthenticatedUser({ headers }, { ...params, page })
+      .getAllForAuthenticatedUser(token, { ...params, page })
       .then(function (response) {
         setAppointments(response.data.content || []);
       })
@@ -86,7 +80,7 @@ export default function AppointmentTable() {
 
   const handleCancel = async (id: UUID) => {
     await service
-      .cancel({ headers }, id)
+      .cancel(token, id)
       .then(function (response) {
         getAppointments(pageNumber);
         console.log(response);
@@ -97,8 +91,8 @@ export default function AppointmentTable() {
   };
 
   React.useEffect(() => {
-    getAppointments(pageNumber);
-  }, [pageNumber]);
+    if (token && role) getAppointments(pageNumber);
+  }, [pageNumber, token, role]);
 
   return (
     <React.Fragment>
