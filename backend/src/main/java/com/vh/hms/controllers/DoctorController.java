@@ -3,7 +3,6 @@ package com.vh.hms.controllers;
 import com.vh.hms.services.AuthService;
 import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.doctor.DoctorResponseDTO;
-import com.vh.hms.services.AuthService;
 import com.vh.hms.services.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,12 @@ public class DoctorController {
     public ResponseEntity<Page<DoctorResponseDTO>> findAllPaged(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "username") String orderBy) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(doctorService.findAll(pageRequest));
+    }
+
+    @GetMapping(value = "/{specialization}")
+    public ResponseEntity<Page<DoctorResponseDTO>> findAllPaged(@PathVariable String specialization, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "username") String orderBy) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return ResponseEntity.ok().body(doctorService.findAllBySpecialization(specialization, pageRequest));
     }
 
     @GetMapping(value = "/{email}")

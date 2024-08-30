@@ -27,17 +27,22 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = recoverToken(request);
-
-        if(token != null) {
-            var login = tokenService.validateToken(token);
-            UserDetails user = authService.loadUserByUsername(login);
-            if (user != null) {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            var token = recoverToken(request);
+            if(token != null) {
+                var login = tokenService.validateToken(token);
+                UserDetails user = authService.loadUserByUsername(login);
+                if (user != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-        }
             filterChain.doFilter(request, response);
+        }
+        catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        }
+
     }
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
