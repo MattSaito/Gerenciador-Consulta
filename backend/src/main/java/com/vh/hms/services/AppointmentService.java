@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,7 +59,7 @@ public class AppointmentService {
 
     @Transactional
     public UUID create(AppointmentRequestDTO requestDTO) {
-        if (isAvailable(requestDTO.time(), requestDTO.date(), requestDTO.doctor().getUsername())) throw new ResourceExistsException("Unavailable appointment");
+        if (isAvailable(requestDTO.time(), requestDTO.date(), requestDTO.doctor())) throw new ResourceExistsException("Unavailable appointment");
         Appointment appointment = dtoToAppointment(requestDTO);
         appointmentRepository.save(appointment);
         return appointment.getAppointmentUUID();
@@ -92,9 +93,10 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.ACTIVE);
         String email = authService.getAuthenticatedUser().getLogin();
         appointment.setPatient(patientService.findPatientByEmail(email));
+        appointment.setDoctor(doctorService.findByUsername(requestDTO.doctor()));
         return appointment;
     }
-    private boolean isAvailable(Instant time, LocalDate date, String username) {
+    private boolean isAvailable(LocalTime time, LocalDate date, String username) {
         return appointmentRepository.existsByDateAndTimeAndDoctor_Username(date, time, username);
     }
 

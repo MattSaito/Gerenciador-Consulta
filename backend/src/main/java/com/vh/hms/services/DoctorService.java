@@ -29,13 +29,18 @@ public class DoctorService {
 
     @Transactional(readOnly = true)
     public DoctorResponseDTO findByEmail(String email) {
-        Doctor doctor = notNullValidator(email);
+        Doctor doctor = notNullValidatorEmail(email);
         return new DoctorResponseDTO(doctor);
+    }
+
+    @Transactional(readOnly = true)
+    public Doctor findByUsername(String username) {
+        return notNullValidatorUsername(username);
     }
 
     @Transactional
     public DoctorResponseDTO update (DoctorRequestDTO doctorRequestDTO, String email) {
-        Doctor doctor = notNullValidator(email);
+        Doctor doctor = notNullValidatorEmail(email);
         if (doctorRepository.existsByUsernameEquals(doctorRequestDTO.username())) throw new EntityExistsException(); // Exception
         BeanUtils.copyProperties(doctorRequestDTO, doctor);
         return new DoctorResponseDTO(doctorRepository.save(doctor));
@@ -51,14 +56,19 @@ public class DoctorService {
 
     @Transactional
     public void deleteByEmail(String email) {
-        Doctor doctor = notNullValidator(email);
+        Doctor doctor = notNullValidatorEmail(email);
         if (doctor.getAppointments().stream().anyMatch(a -> a.getStatus() == AppointmentStatus.ACTIVE)) throw new DatabaseException(); // Database Exception
         doctorRepository.deleteByEmail(email);
     }
 
 
-    private Doctor notNullValidator(String email) {
+    private Doctor notNullValidatorEmail(String email) {
         Optional<Doctor> doctorOptional = doctorRepository.findByEmailEquals(email);
+        return doctorOptional.orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
+    }
+
+    private Doctor notNullValidatorUsername(String username) {
+        Optional<Doctor> doctorOptional = doctorRepository.findByUsernameEquals(username);
         return doctorOptional.orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
     }
 

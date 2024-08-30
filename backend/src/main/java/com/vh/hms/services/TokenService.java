@@ -22,6 +22,7 @@ public class TokenService {
             String token = JWT.create()
                     .withIssuer("hms-api")
                     .withSubject(user.getLogin())
+                    .withClaim("role", user.getRole().toString())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
             return token;
