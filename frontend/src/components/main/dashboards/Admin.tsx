@@ -8,7 +8,7 @@ import DashboardButton from "@/components/sub/buttons/DashboardButton";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import GroupIcon from "@mui/icons-material/Group";
 import BookIcon from "@mui/icons-material/Book";
-import EmailIcon from '@mui/icons-material/Email';
+import EmailIcon from "@mui/icons-material/Email";
 
 export default function Admin() {
   return (
@@ -24,7 +24,7 @@ export default function Admin() {
             }}
           >
             <DashboardButton
-              icon={<GroupIcon fontSize="large"/>}
+              icon={<GroupIcon fontSize="large" />}
               title="Médicos Cadastrados"
               subtitle="Visualizar Médicos"
               link="/auth/sign-in/dashboard/doctors"
@@ -41,7 +41,7 @@ export default function Admin() {
             }}
           >
             <DashboardButton
-              icon={<GroupIcon fontSize="large"/>}
+              icon={<GroupIcon fontSize="large" />}
               title="Pacientes Cadastrados"
               subtitle="Visualizar Pacientes"
               link="/auth/sign-in/dashboard/patients"
@@ -58,10 +58,10 @@ export default function Admin() {
             }}
           >
             <DashboardButton
-              icon={<LocalHospitalIcon fontSize="large"/>}
-              title="Gerenciar Médicos"
-              subtitle="Cadastrar, atualizar e deletar"
-              link="/"
+              icon={<LocalHospitalIcon fontSize="large" />}
+              title="Adicionar Médico"
+              subtitle="Cadastrar um novo médico"
+              link="/auth/sign-in/dashboard/doctors/add"
             />
           </Paper>
         </Grid>
