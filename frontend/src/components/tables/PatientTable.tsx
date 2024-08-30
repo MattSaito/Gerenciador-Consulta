@@ -12,6 +12,15 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { DecodedToken } from "@/components/main/dashboards/Dashboard";
 import { jwtDecode } from "jwt-decode";
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+import { useState } from "react";
 
 interface Patient {
   firstName: string;
@@ -35,9 +44,13 @@ const params = {
 };
 
 export default function PatientTable() {
-  const [patients, setPatients] = React.useState<Patient[]>([]);
-  const [pageNumber, setPageNumber] = React.useState<number>(params.page);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [pageNumber, setPageNumber] = useState<number>(params.page);
+  const [message, setMessage] = useState<string>("");
+  const [messageContent, setMessageContent] = useState<string>("");
   const service = new PatientService();
+  const [searchEmail, setSearchEmail] = useState<string>("");
+  const [openNotFoundDialog, setOpenNotFoundDialog] = useState<boolean>(false);
 
   const getPatients = async (page: number) => {
     await service
@@ -48,6 +61,22 @@ export default function PatientTable() {
       })
       .catch(function (error) {
         console.error(error);
+      });
+  };
+
+  const getPatientByEmail = async (email: string) => {
+    await service
+      .getByEmail({ headers }, email)
+      .then(function (response) {
+        setPatients([response.data]);
+      })
+      .catch(function (error) {
+        setMessage("Email não encontrado");
+        setMessageContent(
+          "O email inserido não corresponde a nenhum paciente."
+        );
+        getPatients(pageNumber);
+        setOpenNotFoundDialog(true);
       });
   };
 
@@ -63,6 +92,10 @@ export default function PatientTable() {
     getPatients(prevPage);
   };
 
+  const handleSearch = () => {
+    getPatientByEmail(searchEmail);
+  };
+
   React.useEffect(() => {
     getPatients(pageNumber);
   }, [pageNumber]);
@@ -70,6 +103,24 @@ export default function PatientTable() {
   return (
     <React.Fragment>
       <Title>Lista de Pacientes</Title>
+      <Box sx={{ display: "flex", mb: 2, mt: 2 }}>
+        <TextField
+          placeholder="Email"
+          size="small"
+          sx={{ ml: 1, width: "50%", mr: 1 }}
+          inputProps={{ "aria-label": "search by email" }}
+          value={searchEmail}
+          onChange={(e) => setSearchEmail(e.target.value)}
+        />
+        <Button
+          variant="contained"
+          size="medium"
+          sx={{ ml: 1, textTransform: "none" }}
+          onClick={handleSearch}
+        >
+          Buscar
+        </Button>
+      </Box>
       <Table size="medium">
         <TableHead>
           <TableRow>
@@ -100,6 +151,16 @@ export default function PatientTable() {
           <NavigateNextIcon />
         </Button>
       </div>
+      <Dialog
+        open={openNotFoundDialog}
+        onClose={() => setOpenNotFoundDialog(false)}
+      >
+        <DialogTitle>{message}</DialogTitle>
+        <DialogContent>{messageContent}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenNotFoundDialog(false)}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }

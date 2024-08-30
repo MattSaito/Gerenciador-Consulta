@@ -25,7 +25,7 @@ interface Appointment {
 }
 
 const token = Cookies.get("token") || "";
-const decodedToken : DecodedToken = jwtDecode(token, { header: true });
+const decodedToken: DecodedToken = jwtDecode(token);
 const headers = {
   Authorization: `Bearer ${token}`,
   "Content-Type": "application/json",
@@ -120,8 +120,11 @@ export default function AppointmentTable() {
         <TableBody>
           {appointments.map((appointment) => (
             <TableRow key={appointment.id}>
-              {role === "PATIENT" ? (<TableCell>{appointment.doctor}</TableCell>) :
-              (<TableCell>{appointment.patient}</TableCell>)}
+              {role === "PATIENT" ? (
+                <TableCell>{appointment.doctor}</TableCell>
+              ) : (
+                <TableCell>{appointment.patient}</TableCell>
+              )}
               <TableCell>{appointment.time}</TableCell>
               <TableCell>{appointment.date}</TableCell>
               <TableCell>{getStatusLabel(appointment.status)}</TableCell>

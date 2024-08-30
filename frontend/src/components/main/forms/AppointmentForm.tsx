@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  AppointmentService,
-  DoctorService,
-} from "@/app/service/Services";
+import { AppointmentService, DoctorService } from "@/app/service/Services";
 import { Typography, TextField, Box, MenuItem } from "@mui/material";
 import ButtonOutline from "../../sub/buttons/ButtonOutline";
 
@@ -13,16 +10,10 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Cookies from "js-cookie";
-
-const specializations = [
-  "Cardiologia",
-  "Pediatria",
-  "Oftalmologia",
-  "Neurologia",
-  "Ortopedia",
-  "Clínica",
-  "Radiologia",
-].map((value) => ({ value }));
+import {
+  mappedSpecializations,
+  specializations,
+} from "@/utils/specializations";
 
 const eightAM = dayjs().set("hour", 8).startOf("hour");
 const sixPM = dayjs().set("hour", 18).startOf("hour");
@@ -109,91 +100,98 @@ export default function AppointmentForm() {
 
   return (
     <>
-    <Typography component="h2" variant="h6" color={color} gutterBottom className="flex justify-center">
-      {message}
-    </Typography>
+      <Typography
+        component="h2"
+        variant="h6"
+        color={color}
+        gutterBottom
+        className="flex justify-center"
+      >
+        {message}
+      </Typography>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: "start",
         }}
       >
-          <Box sx={{ mt: 1 }} component="form" onSubmit={onSubmit} noValidate>
+        <Box sx={{ mt: 1 }} component="form" onSubmit={onSubmit} noValidate>
+          <TextField
+            margin="normal"
+            select
+            required
+            fullWidth
+            label="Especialização"
+            disabled={success}
+            value={specialization}
+            onChange={(e) => setSpecialization(e.target.value)}
+            autoFocus
+          >
+            {mappedSpecializations.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.value}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Médico"
+            id="doctor"
+            disabled={success}
+            value={doctor}
+            onChange={(e) => setDoctor(e.target.value)}
+            select
+          >
+            {doctors.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.value}
+              </MenuItem>
+            ))}
+          </TextField>
 
-            <TextField
-              margin="normal"
-              select
-              required
-              fullWidth
-              label="Especialização"
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              minDate={dayjs()}
+              maxDate={dayjs().add(1, "year")}
+              shouldDisableDate={isWeekend}
+              format="DD/MM/YYYY"
+              value={date}
               disabled={success}
-              value={specialization}
-              onChange={(e) => setSpecialization(e.target.value)}
-              autoFocus
-            >
-              {specializations.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.value}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              margin="normal"
-              fullWidth
-              label="Médico"
-              id="doctor"
+              onChange={(newDate) => setDate(dayjs(newDate) || dayjs())}
+              slotProps={{
+                textField: {
+                  margin: "normal",
+                  fullWidth: true,
+                },
+              }}
+            />
+
+            <TimePicker
+              format="hh:mm"
+              minutesStep={30}
+              timeSteps={{ minutes: 30 }}
+              minTime={eightAM}
+              maxTime={sixPM}
+              ampm={false}
+              value={time}
               disabled={success}
-              value={doctor}
-              onChange={(e) => setDoctor(e.target.value)}
-              select
-            >
-              {doctors.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.value}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                minDate={dayjs()}
-                maxDate={dayjs().add(1, "year")}
-                shouldDisableDate={isWeekend}
-                format="DD/MM/YYYY"
-                value={date}
-                disabled={success}
-                onChange={(newDate) => setDate(dayjs(newDate) || dayjs())}
-                slotProps={{
-                  textField: {
-                    margin: "normal",
-                    fullWidth: true,
-                  },
-                }}
-              />
-
-              <TimePicker
-                format="hh:mm"
-                minutesStep={30}
-                timeSteps={{ minutes: 30 }}
-                minTime={eightAM}
-                maxTime={sixPM}
-                ampm={false}
-                value={time}
-                disabled={success}
-                onChange={(newTime) => setTime(newTime || dayjs())}
-                slotProps={{
-                  textField: {
-                    margin: "normal",
-                    fullWidth: true,
-                  },
-                }}
-              />
-            </LocalizationProvider>
-            <div className="my-5 w-100">
-              <ButtonOutline type="submit" disabled={success}>Enviar</ButtonOutline>
-            </div>
-          </Box>
+              onChange={(newTime) => setTime(newTime || dayjs())}
+              slotProps={{
+                textField: {
+                  margin: "normal",
+                  fullWidth: true,
+                },
+              }}
+            />
+          </LocalizationProvider>
+          <div className="my-5 w-100">
+            <ButtonOutline type="submit" disabled={success}>
+              Enviar
+            </ButtonOutline>
+          </div>
+        </Box>
       </Box>
     </>
   );
