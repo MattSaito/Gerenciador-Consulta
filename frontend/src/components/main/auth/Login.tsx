@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, signInSchema } from "@/utils/schema";
 import { Controller, useForm } from "react-hook-form";
 import { redirect, useRouter } from "next/navigation";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 export default function SignIn() {
   const service = new AuthService();
@@ -34,7 +34,7 @@ export default function SignIn() {
     mode: "all",
     defaultValues: {
       login: "",
-      password: ""
+      password: "",
     },
     resolver: zodResolver(signInSchema),
   });
@@ -46,12 +46,18 @@ export default function SignIn() {
       service
         .login({
           login: values.login,
-          password: values.password
+          password: values.password,
         })
         .then(function (response) {
           setSuccess(true);
           const token = response.data.token;
-          Cookies.set('token', token, { sameSite: 'None', secure: true })
+          const role = response.data.role;
+          Cookies.set("token", token, {
+            sameSite: "None",
+            secure: true,
+            expires: 7,
+          });
+          Cookies.set("role", role);
           router.push("/auth/sign-in/dashboard");
         })
         .catch(function (error) {

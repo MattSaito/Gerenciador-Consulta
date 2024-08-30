@@ -4,7 +4,7 @@ import MessagesTable from "../tables/MessagesTable";
 
 export default function MessagesList() {
   return (
-    <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ p: 2, mt: 10, mb: 4 }}>
       <Grid container>
         <Grid item xs={12}>
           <Paper
@@ -12,7 +12,7 @@ export default function MessagesList() {
               p: 2,
               display: "flex",
               flexDirection: "column",
-              overflowX: "auto"
+              overflowX: "auto",
             }}
           >
             {" "}
