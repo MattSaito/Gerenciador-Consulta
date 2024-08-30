@@ -31,7 +31,8 @@ public class AuthController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        var role = String.valueOf(((User) auth.getPrincipal()).getRole());
+        return ResponseEntity.ok(new LoginResponseDTO(token, role));
     }
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid PatientRequestDTO data) {
