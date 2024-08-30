@@ -17,7 +17,7 @@ export class MessageService {
 
   delete(headers: AxiosRequestConfig, id: string) {
     return axiosInstance.delete(`/messages/${id}`, headers);
-  };
+  }
 
   getAll(
     headers: AxiosRequestConfig,
@@ -120,6 +120,10 @@ export class AppointmentService {
 }
 
 export class DoctorService {
+  getByEmail(headers: AxiosRequestConfig, email: string) {
+    return axiosInstance.get(`/doctors/${email}`, headers);
+  }
+
   create(
     body: {
       username: string;
@@ -132,21 +136,6 @@ export class DoctorService {
     headers: AxiosRequestConfig
   ) {
     return axiosInstance.post("/doctors/register", body, headers);
-  }
-
-  update(
-    body: {
-      username: string;
-      email: string;
-      specialization: string;
-      docFees: number;
-      CRM: string;
-      password: string;
-    },
-    headers: AxiosRequestConfig,
-    email: string
-  ) {
-    return axiosInstance.put(`/doctors/${email}`, body, headers);
   }
 
   delete(headers: AxiosRequestConfig, email: string) {
@@ -199,5 +188,8 @@ export class PatientService {
         orderBy: params.orderBy || "firstName",
       },
     });
+  }
+  getByEmail(headers: AxiosRequestConfig, email: string) {
+    return axiosInstance.get(`/patients/${email}`, headers);
   }
 }
