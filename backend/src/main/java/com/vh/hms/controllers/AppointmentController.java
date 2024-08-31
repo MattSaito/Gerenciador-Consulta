@@ -2,6 +2,7 @@ package com.vh.hms.controllers;
 
 import com.vh.hms.domain.appointment.AppointmentRequestDTO;
 import com.vh.hms.domain.appointment.AppointmentResponseDTO;
+import com.vh.hms.domain.appointment.DetailedAppointmentResponseDTO;
 import com.vh.hms.services.AppointmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class AppointmentController {
     AppointmentService service;
 
     @GetMapping
-    public ResponseEntity<Page<AppointmentResponseDTO>> getAll (@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "date") String orderBy) {
+    public ResponseEntity<Page<DetailedAppointmentResponseDTO>> getAll (@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "date") String orderBy) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(service.findAll(pageRequest));
     }
@@ -47,12 +48,12 @@ public class AppointmentController {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(service.findAllByPatient(pageRequest, patient));
     }
-
     @PostMapping("/booking")
     public ResponseEntity<Void> booking(@RequestBody @Valid AppointmentRequestDTO request) {
         URI url = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(service.create(request)).toUri();
         return ResponseEntity.created(url).build();
     }
+
 
     @PatchMapping("/cancel/{id}")
     public ResponseEntity<Void> cancel(@PathVariable UUID id) {

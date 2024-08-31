@@ -1,10 +1,7 @@
 package com.vh.hms.services;
 
 
-import com.vh.hms.domain.appointment.Appointment;
-import com.vh.hms.domain.appointment.AppointmentRequestDTO;
-import com.vh.hms.domain.appointment.AppointmentResponseDTO;
-import com.vh.hms.domain.appointment.AppointmentStatus;
+import com.vh.hms.domain.appointment.*;
 import com.vh.hms.domain.user.User;
 import com.vh.hms.domain.user.UserRole;
 import com.vh.hms.repositories.AppointmentRepository;
@@ -36,8 +33,8 @@ public class AppointmentService {
     PatientService patientService;
 
     @Transactional(readOnly = true)
-    public Page<AppointmentResponseDTO> findAll(Pageable pageable) {
-        return appointmentRepository.findAll(pageable).map(AppointmentResponseDTO::new);
+    public Page<DetailedAppointmentResponseDTO> findAll(Pageable pageable) {
+        return appointmentRepository.findAll(pageable).map(DetailedAppointmentResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
