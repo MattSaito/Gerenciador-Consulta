@@ -1,5 +1,6 @@
 package com.vh.hms.controllers;
 
+import com.vh.hms.domain.user.UserDTO;
 import com.vh.hms.services.AuthService;
 import com.vh.hms.services.TokenService;
 import com.vh.hms.domain.patient.PatientRequestDTO;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -39,5 +37,10 @@ public class AuthController {
         if (authService.loadUserByUsername(data.email()) != null) return ResponseEntity.badRequest().build();
         authService.patientSignUp(data);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<UserDTO> current() {
+        return ResponseEntity.ok().body(authService.getAuthenticatedName());
     }
 }

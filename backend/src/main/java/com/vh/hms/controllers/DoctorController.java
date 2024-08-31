@@ -28,8 +28,8 @@ public class DoctorController {
         return ResponseEntity.ok().body(doctorService.findAll(pageRequest));
     }
 
-    @GetMapping(value = "/{specialization}")
-    public ResponseEntity<Page<DoctorResponseDTO>> findAllPaged(@PathVariable String specialization, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "username") String orderBy) {
+    @GetMapping(value = "/list/{specialization}")
+    public ResponseEntity<Page<DoctorResponseDTO>> findAllBySpecializationPaged(@PathVariable String specialization, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "4") Integer linesPerPage, @RequestParam(defaultValue = "ASC") String direction, @RequestParam(defaultValue = "username") String orderBy) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(doctorService.findAllBySpecialization(specialization, pageRequest));
     }
