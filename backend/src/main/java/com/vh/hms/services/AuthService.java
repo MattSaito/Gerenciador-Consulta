@@ -3,6 +3,8 @@ package com.vh.hms.services;
 import com.vh.hms.domain.doctor.DoctorRequestDTO;
 import com.vh.hms.domain.user.User;
 import com.vh.hms.domain.patient.PatientRequestDTO;
+import com.vh.hms.domain.user.UserDTO;
+import com.vh.hms.domain.user.UserRole;
 import com.vh.hms.repositories.UserRepository;
 import com.vh.hms.services.exceptions.ResourceExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +49,12 @@ public class AuthService implements UserDetailsService {
 
     public User getAuthenticatedUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public UserDTO getAuthenticatedName() {
+       User user = getAuthenticatedUser();
+       if (user.getRole() == UserRole.DOCTOR) return new UserDTO(doctorService.findByEmail(user.getLogin()).username());
+       else if (user.getRole() == UserRole.PATIENT) return new UserDTO(patientService.findByEmail(user.getLogin()).firstName());
+       else return new UserDTO("Admin");
     }
 }

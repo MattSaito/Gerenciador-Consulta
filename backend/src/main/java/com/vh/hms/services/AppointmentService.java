@@ -17,8 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +43,8 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public Page<AppointmentResponseDTO> findAllByAuthenticated(Pageable pageable) {
         User user = authService.getAuthenticatedUser();
-        if (user.getRole() == UserRole.PATIENT) return appointmentRepository.findAllByPatient_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
+        if (user.getRole() == UserRole.PATIENT)
+            return appointmentRepository.findAllByPatient_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
         return appointmentRepository.findAllByDoctor_Email(user.getLogin(), pageable).map(AppointmentResponseDTO::new);
     }
 
@@ -59,23 +60,24 @@ public class AppointmentService {
 
     @Transactional
     public UUID create(AppointmentRequestDTO requestDTO) {
-        if (isAvailable(requestDTO.time(), requestDTO.date(), requestDTO.doctor())) throw new ResourceExistsException("Unavailable appointment");
+        if (isAvailable(requestDTO.time(), requestDTO.date(), requestDTO.doctor()))
+            throw new ResourceExistsException("Unavailable appointment");
         Appointment appointment = dtoToAppointment(requestDTO);
         appointmentRepository.save(appointment);
         return appointment.getAppointmentUUID();
     }
 
     public void finish() {
-        List<Appointment> appointments = appointmentRepository.findAllByDateAfterAndTimeAfterAndStatusEquals(LocalDate.now(), Instant.now(), AppointmentStatus.ACTIVE);
-        appointments.forEach(a -> a.setStatus(AppointmentStatus.FINISHED));
-        appointmentRepository.saveAll(appointments);
+        List<Appointment> appointmentsToFinish = appointmentRepository.findByStatusAndDateTimeBefore(AppointmentStatus.ACTIVE, LocalDate.now(), LocalTime.now());
+        appointmentsToFinish.forEach(appointment -> appointment.setStatus(AppointmentStatus.FINISHED));
+        appointmentRepository.saveAll(appointmentsToFinish);
     }
 
     @Transactional
     public void cancel(UUID uuid) {
         Appointment appointment = notNullValidator(uuid);
         User user = authService.getAuthenticatedUser();
-        if (appointment.getStatus() != AppointmentStatus.ACTIVE) {
+        if (appointment.getStatus() == AppointmentStatus.ACTIVE) {
             if (user.getRole() == UserRole.PATIENT) appointment.setStatus(AppointmentStatus.CANCELLED_BY_PATIENT);
             else appointment.setStatus((AppointmentStatus.CANCELLED_BY_DOCTOR));
             appointmentRepository.save(appointment);
@@ -96,6 +98,7 @@ public class AppointmentService {
         appointment.setDoctor(doctorService.findByUsername(requestDTO.doctor()));
         return appointment;
     }
+
     private boolean isAvailable(LocalTime time, LocalDate date, String username) {
         return appointmentRepository.existsByDateAndTimeAndDoctor_Username(date, time, username);
     }
