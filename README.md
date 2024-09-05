@@ -10,3 +10,5 @@ Aplicativo para gerenciar consultas para a matéria de Engenharia de Software(BC
 ## Participantes
 
 João Victor Briganti de Oliveira
+
+Fernando Roberto Delbone
