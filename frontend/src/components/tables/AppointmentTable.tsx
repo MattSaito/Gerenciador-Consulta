@@ -124,6 +124,9 @@ export default function AppointmentTable() {
               <TableCell>{getStatusLabel(appointment.status)}</TableCell>
               <TableCell>
                 <CancelButton
+                  style={{
+                    display: appointment.status !== "ACTIVE" ? "none" : "block",
+                  }}
                   disabled={appointment.status != "ACTIVE"}
                   onClick={handleCancel.bind(null, appointment.id)}
                 >

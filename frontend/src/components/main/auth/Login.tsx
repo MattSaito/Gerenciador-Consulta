@@ -20,6 +20,7 @@ import { SignInSchema, signInSchema } from "@/utils/schema";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
   const service = new AuthService();
@@ -61,11 +62,11 @@ export default function SignIn() {
           router.push("/auth/sign-in/dashboard");
         })
         .catch(function (error) {
-          setMessage("Falha na autenticação.");
+          toast.error("Falha na autenticação");
           console.error(error);
         });
     },
-    [router]
+    [router, service]
   );
   return (
     <>
@@ -172,13 +173,6 @@ export default function SignIn() {
                     </Grid>
                   </Grid>
                 </Box>
-                <div
-                  className={`${
-                    success === true ? "text-blue-500" : "text-red-600"
-                  } px-5 py-2`}
-                >
-                  {message}
-                </div>
                 <div className="bg-slate-100 flex flex-col"></div>
               </Box>
             </Grid>
