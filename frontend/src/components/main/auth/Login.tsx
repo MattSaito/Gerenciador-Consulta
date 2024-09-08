@@ -18,7 +18,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, signInSchema } from "@/utils/schema";
 import { Controller, useForm } from "react-hook-form";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
 export default function SignIn() {

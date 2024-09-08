@@ -1,51 +1,48 @@
 "use client";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Cookies from "js-cookie";
-import Patient from "./Patient";
-import Doctor from "./Doctor";
-import { jwtDecode } from "jwt-decode";
-import Admin from "./Admin";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { Copyright } from "@/utils/copyright";
+import DashboardButton from "@/components/sub/buttons/DashboardButton";
+import BookIcon from "@mui/icons-material/Book";
+import Historic from "@/components/tables/AppointmentTable";
 
-export interface DecodedToken {
-    role: string;
-  }
-
-const token = Cookies.get("token") || "";
-const decodedToken: DecodedToken = jwtDecode(token);
-
-  
-
-export default function Dashboard() {
-    const { role } = decodedToken;
-  let dashboardContent = null;
-
-  switch (role) {
-    case "PATIENT":
-      dashboardContent = <Patient />;
-      break;
-    case "DOCTOR":
-      dashboardContent = <Doctor />;
-      break;
-    case "ADMIN":
-      dashboardContent = <Admin />;
-      break;
-    default:
-      break;
-  }
-
+export default function Doctor() {
   return (
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-      }}
-    >
-      <Toolbar />
-      {dashboardContent}
-    </Box>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={12} lg={12}>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "start",
+            }}
+          >
+            <DashboardButton
+              icon={<BookIcon fontSize="large" />}
+              title="Minhas Consultas"
+              subtitle="Visualizar histórico"
+              link="/auth/sign-in/dashboard/appointments"
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={12} lg={12}>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              overflowX: "auto",
+            }}
+          >
+            <Historic />
+          </Paper>
+        </Grid>
+      </Grid>
+      <Copyright sx={{ pt: 4 }} />
+    </Container>
   );
 }

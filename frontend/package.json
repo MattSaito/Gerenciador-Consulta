@@ -31,6 +31,7 @@
     "react-animated-numbers": "^0.17.1",
     "react-dom": "^18",
     "react-hook-form": "^7.49.3",
+    "react-hot-toast": "^2.4.1",
     "react-login-page": "^1.0.2",
     "react-phone-number-input": "^3.3.9",
     "react-scroll": "^1.9.0",

@@ -18,9 +18,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import { SignUpSchema, signUpSchema } from "@/utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function SignUp() {
-  const service = new AuthService();
+  const router = useRouter();
   const [success, setSuccess] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -42,28 +45,48 @@ export default function SignUp() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = useCallback((values: SignUpSchema) => {
-    service
-      .register({
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
-        cpf: values.cpf,
-        phone: values.phone,
-        password: values.password,
-      })
-      .then(function (response) {
-        setSuccess(true);
-        setSubmitted(true);
-        setMessage("Conta Criada!");
-        reset();
-      })
-      .catch(function (error) {
-        setSuccess(false);
-        if (error.response.status === 400) setMessage("Os dados fornecidos estão em uso.")
-        else setMessage("Falha na criação da conta.")
-      });
-  }, [reset]);
+  const onSubmit = useCallback(
+    (values: SignUpSchema) => {
+      const service = new AuthService();
+      service
+        .register({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          cpf: values.cpf,
+          phone: values.phone,
+          password: values.password,
+        })
+        .then(function (response) {
+          setSuccess(true);
+          setSubmitted(true);
+          const successMessage = "Conta criada!";
+          setMessage(successMessage);
+          toast.success(successMessage);
+          const token = response.data.token;
+          const role = response.data.role;
+          Cookies.set("token", token, {
+            sameSite: "None",
+            secure: true,
+            expires: 7,
+          });
+          Cookies.set("role", role);
+          router.push("/auth/sign-in/dashboard");
+          reset();
+        })
+        .catch(function (error) {
+          setSuccess(false);
+          const errorMessage =
+            error.response.status === 400
+              ? "Os dados fornecidos estão em uso"
+              : "Falha na criação da conta";
+          console.log(error.response.status);
+          console.log(errorMessage);
+          toast.error(errorMessage);
+        });
+    },
+    [reset, router]
+  );
 
   return (
     <>
@@ -104,10 +127,16 @@ export default function SignUp() {
                 <Avatar sx={{ m: 1, bgcolor: "#71BCFE" }}>
                   <LockOutlinedIcon />
                 </Avatar>
-                { !submitted? (
-                <><Typography component="h1" variant="h5">
-                    Crie sua conta
-                  </Typography><Box sx={{ mt: 1 }} component="form" onSubmit={handleSubmit(onSubmit)}>
+                {!submitted ? (
+                  <>
+                    <Typography component="h1" variant="h5">
+                      Crie sua conta
+                    </Typography>
+                    <Box
+                      sx={{ mt: 1 }}
+                      component="form"
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
                       <Controller
                         name="firstName"
                         control={control}
@@ -121,8 +150,10 @@ export default function SignUp() {
                             autoFocus
                             error={!!errors.firstName}
                             helperText={errors.firstName?.message}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <Controller
                         name="lastName"
                         control={control}
@@ -136,8 +167,10 @@ export default function SignUp() {
                             autoFocus
                             error={!!errors.lastName}
                             helperText={errors.lastName?.message}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <Controller
                         name="email"
                         control={control}
@@ -151,8 +184,10 @@ export default function SignUp() {
                             autoComplete="email"
                             error={!!errors.email}
                             helperText={errors.email?.message}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <Controller
                         name="cpf"
                         control={control}
@@ -167,8 +202,10 @@ export default function SignUp() {
                             error={!!errors.cpf}
                             helperText={errors.cpf?.message}
                             inputProps={{ maxLength: 11 }}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <Controller
                         name="phone"
                         control={control}
@@ -183,8 +220,10 @@ export default function SignUp() {
                             error={!!errors.phone}
                             helperText={errors.phone?.message}
                             inputProps={{ maxLength: 11 }}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <Controller
                         name="password"
                         control={control}
@@ -199,8 +238,10 @@ export default function SignUp() {
                             autoComplete="current-password"
                             error={!!errors.password}
                             helperText={errors.password?.message}
-                            {...field} />
-                        )} />
+                            {...field}
+                          />
+                        )}
+                      />
                       <div className="my-5 w-100">
                         <ButtonOutline type="submit">Cadastrar</ButtonOutline>
                       </div>
@@ -218,22 +259,20 @@ export default function SignUp() {
                       </Grid>
                     </Box>
                     <div
-                className={`${
-                  success === true ? "text-blue-500" : "text-red-600"
-                } px-5 py-5`} 
-              >
-                {message}
-              </div>
-              <div className="bg-slate-100 flex flex-col h-0 w-0"></div>
-                    </>
+                      className={`${
+                        success === true ? "text-blue-500" : "text-red-600"
+                      } px-5 py-5`}
+                    >
+                      {message}
+                    </div>
+                    <div className="bg-slate-100 flex flex-col h-0 w-0"></div>
+                  </>
                 ) : (
                   <Typography component="h1" variant="h4" className="mb-6">
                     Conta criada!
                   </Typography>
-                )
-}
+                )}
               </Box>
-              
             </Grid>
           </Grid>
         </ThemeProvider>
