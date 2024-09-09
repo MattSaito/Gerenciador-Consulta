@@ -38,6 +38,11 @@ public class Appointment implements Serializable {
         this.status = status;
     }
 
+    public Appointment(AppointmentRequestDTO data) {
+        this.time = data.time();
+        this.date = data.date();
+    }
+
     public UUID getAppointmentUUID() {
         return appointmentUUID;
     }

@@ -31,6 +31,13 @@ public class Message implements Serializable {
         this.description = description;
     }
 
+    public Message(MessageDTO data) {
+        this.sender = data.sender();
+        this.email = data.email();
+        this.phone = data.phone();
+        this.description = data.description();
+    }
+
     public UUID getMessageUUID() {
         return messageUUID;
     }
