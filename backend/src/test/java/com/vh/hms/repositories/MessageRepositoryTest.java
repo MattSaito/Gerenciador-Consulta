@@ -4,6 +4,7 @@ import com.vh.hms.domain.message.Message;
 import com.vh.hms.domain.message.MessageDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,7 +15,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
+@EnabledIf("test")
 class MessageRepositoryTest {
 
     @Autowired
