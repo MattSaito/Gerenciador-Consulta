@@ -1,4 +1,4 @@
-import MessagesList from "@/components/lists/MessagesList";
+import MessagesList from "@/components/lists/MessageList";
 
 const Page = () => {
   return (

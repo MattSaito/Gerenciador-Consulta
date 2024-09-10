@@ -12,7 +12,7 @@ export default function DoctorList() {
               p: 4,
               display: "flex",
               flexDirection: "column",
-              overflowX: "auto",
+              overflowX: "auto"
             }}
           >
             {" "}

@@ -1,11 +1,5 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import Cookies from "js-cookie";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import Cookies from 'js-cookie';
 
 interface AuthContextType {
   token: string | null;
@@ -14,15 +8,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const tokenFromCookie = Cookies.get("token") || null;
-    const roleFromCookie = Cookies.get("role") || null;
+    const tokenFromCookie = Cookies.get('token') || null;
+    const roleFromCookie = Cookies.get('role') || null;
 
     setToken(tokenFromCookie);
     setRole(roleFromCookie);
@@ -30,12 +22,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   // Observa mudanças no token e no papel, atualizando o estado conforme necessário
   useEffect(() => {
-    const tokenFromCookie = Cookies.get("token") || null;
-    const roleFromCookie = Cookies.get("role") || null;
+    const tokenFromCookie = Cookies.get('token') || null;
+    const roleFromCookie = Cookies.get('role') || null;
 
     setToken(tokenFromCookie);
     setRole(roleFromCookie);
-  }, [token, role]);
+  }, [token, role]); 
 
   return (
     <AuthContext.Provider value={{ token, role }}>
@@ -47,7 +39,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
