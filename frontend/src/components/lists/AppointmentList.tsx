@@ -5,7 +5,7 @@ import DetailedAppointmentTable from "../tables/DetailedAppointmentTable";
 import { useAuth } from "@/utils/authContext";
 
 export default function AppointmentList() {
-  const { role } = useAuth();
+  const { role }  = useAuth();
   return (
     <Container maxWidth="lg" sx={{ mt: 12, mb: 4 }}>
       <Grid container>
@@ -19,11 +19,7 @@ export default function AppointmentList() {
             }}
           >
             {" "}
-            {role === "ADMIN" ? (
-              <DetailedAppointmentTable />
-            ) : (
-              <AppointmentTable />
-            )}
+            {role === "ADMIN" ? <DetailedAppointmentTable /> : <AppointmentTable />}
           </Paper>
         </Grid>
       </Grid>

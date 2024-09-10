@@ -12,7 +12,7 @@ export default function MessagesList() {
               p: 2,
               display: "flex",
               flexDirection: "column",
-              overflowX: "auto",
+              overflowX: "auto"
             }}
           >
             {" "}
