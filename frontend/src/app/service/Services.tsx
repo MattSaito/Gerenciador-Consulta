@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { UUID } from "crypto";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "https://gerenciador-consulta.onrender.com/",
 });
 
 export function getHeaders(token: string | null): AxiosRequestConfig {
