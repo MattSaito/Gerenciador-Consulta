@@ -18,9 +18,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, signInSchema } from "@/utils/schema";
 import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import toast from "react-hot-toast";
+import { redirect, useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 
 export default function SignIn() {
   const service = new AuthService();
@@ -35,7 +34,7 @@ export default function SignIn() {
     mode: "all",
     defaultValues: {
       login: "",
-      password: "",
+      password: ""
     },
     resolver: zodResolver(signInSchema),
   });
@@ -47,26 +46,22 @@ export default function SignIn() {
       service
         .login({
           login: values.login,
-          password: values.password,
+          password: values.password
         })
         .then(function (response) {
           setSuccess(true);
           const token = response.data.token;
           const role = response.data.role;
-          Cookies.set("token", token, {
-            sameSite: "None",
-            secure: true,
-            expires: 7,
-          });
-          Cookies.set("role", role);
+          Cookies.set('token', token, { sameSite: 'None', secure: true, expires: 7})
+          Cookies.set('role', role);
           router.push("/auth/sign-in/dashboard");
         })
         .catch(function (error) {
-          toast.error("Falha na autenticação");
+          setMessage("Falha na autenticação.");
           console.error(error);
         });
     },
-    [router, service]
+    [router]
   );
   return (
     <>
@@ -173,6 +168,13 @@ export default function SignIn() {
                     </Grid>
                   </Grid>
                 </Box>
+                <div
+                  className={`${
+                    success === true ? "text-blue-500" : "text-red-600"
+                  } px-5 py-2`}
+                >
+                  {message}
+                </div>
                 <div className="bg-slate-100 flex flex-col"></div>
               </Box>
             </Grid>

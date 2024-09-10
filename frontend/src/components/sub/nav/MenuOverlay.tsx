@@ -9,7 +9,7 @@ interface MenuOverlayProps {
 const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
   return (
     <ul className="flex flex-col py-4 items-center sm:hidden">
-      <NavLink path="/auth/register" title="Entrar" />
+        <NavLink path="/auth/register" title="Entrar" />
       {links.map((link, index) => (
         <li key={index}>
           <NavLink path={link.to} title={link.title} />

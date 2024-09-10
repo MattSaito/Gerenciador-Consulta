@@ -35,10 +35,7 @@ export const doctorSchema = z.object({
     .string()
     .min(5, { message: "A senha precisa conter ao menos 5 caracteres" }),
   specialization: z.string(),
-  docFee: z.coerce
-    .number()
-    .min(40, { message: "A taxa mínima é 40" })
-    .max(1000, { message: "A taxa máxima é 1000" }),
+  docFee: z.coerce.number().min(40, { message: "A taxa mínima é 40"}).max(1000, { message: "A taxa máxima é 1000"}),
   CRM: z.string().regex(/^\d{6}[a-zA-Z]{2}$/, { message: "CRM inválido" }),
 });
 
